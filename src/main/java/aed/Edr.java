@@ -1,10 +1,29 @@
 package aed;
 import java.util.ArrayList;
 
+import aed.MinHeap.HandleMinHeap;
+
 public class Edr {
 
+    private MinHeap _heapEstudiantes;
+    private int _ladoAula;
+    private HandleMinHeap[] _handlesEstudiantes;
+    private int[] _examenCanonico;
+    private HandleMinHeap[] _handlesSospechosos;
+
     public Edr(int LadoAula, int Cant_estudiantes, int[] ExamenCanonico) {
-        throw new UnsupportedOperationException("Sin implementar");
+        _handlesEstudiantes = new HandleMinHeap[Cant_estudiantes];
+        _handlesEstudiantes = new HandleMinHeap[0];
+        _heapEstudiantes = new MinHeap();
+        _ladoAula = LadoAula;
+        _examenCanonico = ExamenCanonico;
+        
+        for (int i = 0; i < Cant_estudiantes; i ++) {
+            Estudiante est = new Estudiante(i);
+            int index = _heapEstudiantes.encolar(est);
+
+            _handlesEstudiantes[i] = _heapEstudiantes.new HandleMinHeap(index);
+        }
     }
 
 //-------------------------------------------------NOTAS--------------------------------------------------------------------------
