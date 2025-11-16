@@ -224,7 +224,7 @@ public class Edr {
             while(r < 10 && sospechoso == true) {
                 int res = _handlesEstudiantes[e].getEstudiante().getExamen()[r];
 
-                if( contadorRespuestas[r][res] - 1  <  (_handlesEstudiantes.length * 0.25)){
+                if(res != -1 && contadorRespuestas[r][res] - 1  <  (_handlesEstudiantes.length * 0.25)){
                     sospechoso = false;
                 }
 
