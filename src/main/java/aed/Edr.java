@@ -70,7 +70,7 @@ public class Edr {
         double[] resultado = new double[_handlesEstudiantes.length];
         for (int i = 0; i < _handlesEstudiantes.length; i++) {
             Estudiante estudiante = _handlesEstudiantes[i].getEstudiante();
-            resultado[i] = estudiante.getRespuestasCorrectas() / cantPreguntas;
+            resultado[i] = 100 * ((double) estudiante.getRespuestasCorrectas() / cantPreguntas);
         }
         return resultado;
        
