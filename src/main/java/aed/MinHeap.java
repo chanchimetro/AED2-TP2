@@ -19,8 +19,21 @@ public class MinHeap {
         }
 
         public void actualizarHeap() {
-            subir(index);
-            bajar(index);
+            // Buscar la posición actual del estudiante en el heap
+            int posicionActual = -1;
+            int i = 0;
+            while (i < _size && posicionActual == -1) {
+                if (_lista[i] == _est) {
+                    posicionActual = i;
+                }
+                i++;
+            }
+            
+            if (posicionActual != -1) {
+                index = posicionActual;
+                index = subir(index);
+                index = bajar(index);
+            }
         }
 
     }
@@ -71,7 +84,7 @@ public class MinHeap {
     }
 
     public Estudiante desencolar() {
-        Estudiante ret = new Estudiante(_lista[0]);
+        Estudiante ret = _lista[0];
         
         _lista[0] = _lista[_size - 1];
         
@@ -83,24 +96,33 @@ public class MinHeap {
         _lista = aux;
         _size -= 1;
         
-        bajar(0);
+        if (_size > 0) {
+            bajar(0);
+        }
         
         return ret;
     }
 
-    private void bajar(int index) {
-        while(!hoja(index) && (_lista[index].compareTo(_lista[hijoIzq(index)]) > 0 || _lista[index].compareTo(_lista[hijoDer(index)]) > 0)) {
+
+    private int bajar(int index) {
+        int ret = index;
+        while(!hoja(index) && (_lista[index].compareTo(_lista[hijoIzq(index)]) > 0 || 
+               (hijoDer(index) < _size && _lista[index].compareTo(_lista[hijoDer(index)]) > 0))) {
             int menor;
-            if(_lista[hijoIzq(index)].compareTo(_lista[hijoDer(index)]) < 0) {
+            if(hijoDer(index) >= _size || _lista[hijoIzq(index)].compareTo(_lista[hijoDer(index)]) < 0) {
                 menor = hijoIzq(index);
             } else {
                 menor = hijoDer(index);
             }
 
-            Estudiante aux = new Estudiante(_lista[index]);
+            Estudiante aux = _lista[index];
             _lista[index] = _lista[menor];
             _lista[menor] = aux;
+            index = menor;
+            ret = menor;
         }
+        
+        return ret;
     }
 
     private boolean hoja(int index) {

@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import aed.MinHeap.HandleMinHeap;
-import aed.NotaFinal;
 
 public class Edr {
 
@@ -128,114 +127,72 @@ public class Edr {
 //------------------------------------------------CONSULTAR DARK WEB-------------------------------------------------------
 
     public void consultarDarkWeb(int n, int[] examenDW) {
-        List<Estudiante> aUtilizarLaDW = new ArrayList<>();
-        // Busco los n estudiantes de peor notas con menor Id
-        for (int x = 0; x < n; x++){
-            // Obtengo todos los estudiantes de menor nota
-            List<Estudiante> provisoria = new ArrayList<>();
-            Estudiante estDW = _heapEstudiantes.desencolar();
-            provisoria.add(estDW);
-            while (true){
-                Estudiante estProv = _heapEstudiantes.desencolar();
-                if (estProv.getRespuestasCorrectas() == estDW.getRespuestasCorrectas()){
-                    provisoria.add(estProv);
-                } else {
-                    _heapEstudiantes.encolar(estProv);
-                    break;
-                }
-            }
-            // Obtengo el que tiene id mas bajo
-            int indiceDW = 0; 
-            for (int i = 0; i < provisoria.size() - 1;i++ ){
-                if (provisoria.get(indiceDW).getId() > provisoria.get(i+1).getId()){
-                    indiceDW = provisoria.get(i+1).getId();
-                }
-            }
-            // Devuelvo todos los que no me sirven
-            for (int i = 0; i < provisoria.size();i++ ){
-                if (indiceDW != provisoria.get(i).getId()){
-                    _heapEstudiantes.encolar(provisoria.get(i));
-                }
-            }
-            // Me quedo con el estudiante correcto
-            aUtilizarLaDW.add(provisoria.get(indiceDW));
-        }
-        // Devuelvo los estudiantes al Heap
-        for (int x = 0; x < n; x++){
-            _heapEstudiantes.encolar(aUtilizarLaDW.get(x));
-        }
-        // Modifico la nota
-        for (int x = 0; x < n; x++){
-            for (int i = 0; i < examenDW.length; i++){
-                aUtilizarLaDW.get(x).cambiarExamen(i, examenDW[i], _examenCanonico);
-            }
-        }
+        // List<Estudiante> aUtilizarLaDW = new ArrayList<>();
+        // // Busco los n estudiantes de peor notas con menor Id
+        // for (int x = 0; x < n; x++){
+        //     Estudiante estDW = _heapEstudiantes.desencolar();
+        //     estDW.
+
+
+
+
+        //     provisoria.add(estDW);
+        //     int largo = 1;
+        //     while (true){
+        //         Estudiante estProv = _heapEstudiantes.desencolar();
+        //         if (estProv.getRespuestasCorrectas() == estDW.getRespuestasCorrectas()){
+        //             provisoria.add(estProv);
+        //             largo++;
+        //         } else {
+        //             _heapEstudiantes.encolar(estProv);
+        //             break;
+        //         }
+        //     }
+        //     // Obtengo el que tiene id mas bajo
+        //     int indiceDW = 0; 
+        //     for (int i = 0; i < largo - 1;i++ ){
+        //         if (provisoria.get(indiceDW).getId() > provisoria.get(i+1).getId()){
+        //             indiceDW = provisoria.get(i+1).getId();
+        //         }
+        //     }
+        //     // Devuelvo todos los que no me sirven
+        //     for (int i = 0; i < largo;i++ ){
+        //         if (indiceDW != provisoria.get(i).getId()){
+        //             _heapEstudiantes.encolar(provisoria.get(i));
+        //         }
+        //     }
+        //     // Me quedo con el estudiante correcto
+        //     aUtilizarLaDW.add(provisoria.get(indiceDW));
+        // }
+        // // Devuelvo los estudiantes al Heap
+        // for (int x = 0; x < n; x++){
+        //     _heapEstudiantes.encolar(aUtilizarLaDW.get(x));
+        // }
+        // // Modifico la nota
+        // for (int x = 0; x < n; x++){
+        //     for (int i = 0; i < examenDW.length; i++){
+        //         aUtilizarLaDW.get(x).cambiarExamen(i, examenDW[i], _examenCanonico);
+        //     }
+        // }
     }
+ 
 
 //-------------------------------------------------ENTREGAR-------------------------------------------------------------
 
  
     public void entregar(int estudiante) {
-        Estudiante est = _handlesEstudiantes[estudiante].getEstudiante();
-        est._entrego = true;
+        for (int i = 0; i < _handlesEstudiantes.length; i++) {
+            if (estudiante == i) {
+                _handlesEstudiantes[i].getEstudiante().entregarExamen();
+            }
+        }
+       
     }
 
 //-----------------------------------------------------CORREGIR---------------------------------------------------------
 
     public NotaFinal[] corregir() {
-        // Devuelve las notas de los examenes de los estudiantes que no se hayan copiado 
-        // ordenada por NotaFinal.nota de forma decreciente. 
-        // En caso de empate, se desempata por mayor NotaFinal.id de estudiante.
-        int [] copiados = chequearCopias();
-        List<Estudiante> provisoria = new ArrayList<>();
-        List<Estudiante> estudiantesOrdenados = new ArrayList<>();
-        // Me genero la lista de estudiantes ordenados por nota de mayor a menor
-        while (_heapEstudiantes.size() > 0) {
-            Estudiante est = _heapEstudiantes.desencolar();
-            provisoria.add(est);
-            if (!elEstudianteSeCopio(est,copiados)){
-                agregar(estudiantesOrdenados,est);
-            }
-        }
-        for (int i = 0;i<provisoria.size();i++){
-            _heapEstudiantes.encolar(provisoria.get(i));
-        }
-        NotaFinal [] NotasOrdenadas = new NotaFinal[estudiantesOrdenados.size()];
-        for (int i = 0;i<estudiantesOrdenados.size();i++){
-            int id = estudiantesOrdenados.get(i).getId();
-            double nota = 100 * ((double) estudiantesOrdenados.get(i).getRespuestasCorrectas() / _examenCanonico.length);
-            NotaFinal a = new NotaFinal(nota, id );
-            NotasOrdenadas[i] = a;
-        }
-        return NotasOrdenadas;
-    }
-    
-    private boolean elEstudianteSeCopio (Estudiante est, int [] copiados ){
-        for(int i = 0; i < copiados.length; i++){
-            if (copiados[i] == est.getId()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void agregar(List<Estudiante> estudiantesOrdenados, Estudiante est){
-        int indice = estudiantesOrdenados.size();
-        estudiantesOrdenados.add(est);
-        while (true){
-            //int indice = estudiantesOrdenados.indexOf(est);
-            if (indice == 0){
-                break;
-            } else if (est.getRespuestasCorrectas() != estudiantesOrdenados.get(indice - 1).getRespuestasCorrectas()){
-                break;
-            } else if (est.getId() > estudiantesOrdenados.get(indice - 1).getId()){
-                break;
-            } else {
-                estudiantesOrdenados.set(indice, estudiantesOrdenados.get(indice - 1));
-                estudiantesOrdenados.set(indice - 1, est);
-                indice--;
-            }
-        }
+        throw new UnsupportedOperationException("Sin implementar");
     }
 
 //-------------------------------------------------------CHEQUEAR COPIAS-------------------------------------------------
