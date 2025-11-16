@@ -1,10 +1,10 @@
 package aed;
 
 public class Estudiante {
-    private int _id;
-    private boolean _entrego;
-    private int _cantRespuestasCorrectas;
-    private int[] _examen;
+    public int _id;
+    public boolean _entrego;
+    public int _cantRespuestasCorrectas;
+    public int[] _examen;
 
     public Estudiante(int id, int longExamen) {
         _id = id;

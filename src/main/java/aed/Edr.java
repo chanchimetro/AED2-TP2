@@ -1,6 +1,5 @@
 package aed;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import aed.MinHeap.HandleMinHeap;
@@ -78,7 +77,6 @@ public class Edr {
 
        
     }
-    }
 
 //------------------------------------------------COPIARSE------------------------------------------------------------------------
 
@@ -141,8 +139,9 @@ public class Edr {
         int E = _handlesEstudiantes.length;
         for (int i = 0; i < E; i++) {
             if (estudiante == i) {
-                Estudiante est = _handlesEstudiantes[i].getEstudiante();
+                Estudiante est =_handlesEstudiantes[i].getEstudiante();
                 est._entrego = true;
+
             }
         }
        
