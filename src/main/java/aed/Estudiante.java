@@ -4,17 +4,42 @@ public class Estudiante {
     private int _id;
     private boolean _entrego;
     private int _cantRespuestasCorrectas;
+    private int[] _examen;
 
-    public Estudiante(int id) {
+    public Estudiante(int id, int longExamen) {
         _id = id;
         _entrego = false;
         _cantRespuestasCorrectas = 0;
+        _examen = new int[longExamen];
+        for(int i = 0; i < longExamen; i++){
+            _examen[i] = -1;
+        }
     }
 
     public Estudiante(Estudiante est) {
         _id = est._id;
         _entrego = est._entrego;
         _cantRespuestasCorrectas = est._cantRespuestasCorrectas;
+        _examen = est._examen.clone();
+    }
+
+    public int[] getExamen() {
+        return _examen;
+    }
+
+    public int getId() {
+        return _id;
+    }
+
+    public int getRespuestasCorrectas() {
+        return _cantRespuestasCorrectas;
+    }
+
+    public void cambiarExamen(int punto, int respuesta, int[] examenCanonico){
+        _examen[punto] = respuesta; 
+        if(examenCanonico[punto] == respuesta){
+            _cantRespuestasCorrectas++;
+        }
     }
 
     public int compareTo(Estudiante otro) {

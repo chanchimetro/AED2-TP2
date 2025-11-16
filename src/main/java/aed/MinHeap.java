@@ -17,6 +17,12 @@ public class MinHeap {
         public Estudiante getEstudiante() {
             return _est;
         }
+
+        public void actualizarHeap() {
+            subir(index);
+            bajar(index);
+        }
+
     }
 
     public MinHeap() {
