@@ -207,10 +207,12 @@ public class Edr {
         for (int i = 0;i<largoProvisoria;i++){
             _heapEstudiantes.encolar(provisoria.get(i));
         }
-        NotaFinal [] NotasOrdenadas = null;
+        NotaFinal [] NotasOrdenadas = new NotaFinal[estudiantesOrdenados.size()];
         for (int i = 0;i<largoEstudiantesOrdenados;i++){
-            NotaFinal a = NotaFinal(estudiantesOrdenados.get(i).getRespuestasCorrectas(), estudiantesOrdenados.get(i).getId());
-            NotasOrdenadas.add(a);
+            int id = estudiantesOrdenados.get(i).getId();
+            double nota = 100 * ((double) estudiantesOrdenados.get(i).getRespuestasCorrectas() / _examenCanonico.length);
+            NotaFinal a = new NotaFinal(nota, id );
+            NotasOrdenadas[i] = a;
         }
         return NotasOrdenadas;
     }
