@@ -189,9 +189,62 @@ public class Edr {
 //-----------------------------------------------------CORREGIR---------------------------------------------------------
 
     public NotaFinal[] corregir() {
-        throw new UnsupportedOperationException("Sin implementar");
+        // Devuelve las notas de los examenes de los estudiantes que no se hayan copiado 
+        // ordenada por NotaFinal.nota de forma decreciente. 
+        // En caso de empate, se desempata por mayor NotaFinal.id de estudiante.
+        int [] copiados = chequearCopias();
+        List<Estudiante> provisoria = new ArrayList<>();
+        int largoProvisoria = 0;
+        List<Estudiante> estudiantesOrdenados = new ArrayList<>();
+        int largoEstudiantesOrdenados = 0;
+        // Me genero la lista de estudiantes ordenados por nota de mayor a menor
+        //
+        while (_heapEstudiantes.size() > 0) {
+            Estudiante est = _heapEstudiantes.desencolar();
+            provisoria.add(est);
+            largoProvisoria++;
+            if (!elEstudianteSeCopio(est,copiados)){
+                agregar(estudiantesOrdenados,est);
+                largoEstudiantesOrdenados++;
+            }
+        }
+        for (int i = 0;i<largoProvisoria;i++){
+            _heapEstudiantes.encolar(provisoria.get(i));
+        }
+        NotaFinal [] NotasOrdenadas = null;
+        for (int i = 0;i<largoEstudiantesOrdenados;i++){
+            NotaFinal a = NotaFinal(estudiantesOrdenados.get(i).getRespuestasCorrectas(), estudiantesOrdenados.get(i).getId());
+            NotasOrdenadas.add(a);
+        }
+        return NotasOrdenadas;
+    }
+    
+    private boolean elEstudianteSeCopio (Estudiante est, int [] copiados ){
+        for(int i = 0; i < copiados.length; i++){
+            if (copiados[i] == est.getId()) {
+                return true;
+            }
+        }
+        return false;
     }
 
+    private void agregar(List<Estudiante> estudiantesOrdenados, Estudiante est){
+        estudiantesOrdenados.add(est);
+        while (true){
+            int indice = estudiantesOrdenados.indexOf(est);
+            if (indice == 0){
+                break;
+            } else if (est.getRespuestasCorrectas() != estudiantesOrdenados.get(indice - 1).getRespuestasCorrectas()){
+                break;
+            } else if (est.getId() > estudiantesOrdenados.get(indice - 1).getId()){
+                break;
+            } else {
+                estudiantesOrdenados.set(indice, estudiantesOrdenados.get(indice - 1));
+                estudiantesOrdenados.set(indice - 1, est);
+            }
+        }
+    }
+    
 //-------------------------------------------------------CHEQUEAR COPIAS-------------------------------------------------
 
     public int[] chequearCopias() {
