@@ -129,9 +129,51 @@ public class Edr {
 //------------------------------------------------CONSULTAR DARK WEB-------------------------------------------------------
 
     public void consultarDarkWeb(int n, int[] examenDW) {
-        throw new UnsupportedOperationException("Sin implementar");
+        List<Estudiante> aUtilizarLaDW = new ArrayList<>();
+        // Busco los n estudiantes de peor notas con menor Id
+        for (int x = 0; x < n; x++){
+            // Obtengo todos los estudiantes de menor nota
+            List<Estudiante> provisoria = new ArrayList<>();
+            Estudiante estDW = _heapEstudiantes.desencolar();
+            provisoria.add(estDW);
+            int largo = 1;
+            while (true){
+                Estudiante estProv = _heapEstudiantes.desencolar();
+                if (estProv.getRespuestasCorrectas() == estDW.getRespuestasCorrectas()){
+                    provisoria.add(estProv);
+                    largo++;
+                } else {
+                    _heapEstudiantes.encolar(estProv);
+                    break;
+                }
+            }
+            // Obtengo el que tiene id mas bajo
+            int indiceDW = 0; 
+            for (int i = 0; i < largo - 1;i++ ){
+                if (provisoria.get(indiceDW).getId() > provisoria.get(i+1).getId()){
+                    indiceDW = provisoria.get(i+1).getId();
+                }
+            }
+            // Devuelvo todos los que no me sirven
+            for (int i = 0; i < largo;i++ ){
+                if (indiceDW != provisoria.get(i).getId()){
+                    _heapEstudiantes.encolar(provisoria.get(i));
+                }
+            }
+            // Me quedo con el estudiante correcto
+            aUtilizarLaDW.add(provisoria.get(indiceDW));
+        }
+        // Devuelvo los estudiantes al Heap
+        for (int x = 0; x < n; x++){
+            _heapEstudiantes.encolar(aUtilizarLaDW.get(x));
+        }
+        // Modifico la nota
+        for (int x = 0; x < n; x++){
+            for (int i = 0; i < examenDW.length; i++){
+                aUtilizarLaDW.get(x).cambiarExamen(i, examenDW[i], _examenCanonico);
+            }
+        }
     }
- 
 
 //-------------------------------------------------ENTREGAR-------------------------------------------------------------
 
