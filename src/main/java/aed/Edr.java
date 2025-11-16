@@ -142,9 +142,10 @@ public class Edr {
         // chequear que todos hayan terminado todos todos
         // hacer una lista de listas con las respuestas de cada estudiante examenes
         // por respuesta comparar entre todos los estudiantes 
-        int[int[]] examenesResueltos = new int[new int[_handlesEstudiantes.length]];
+        ArrayList<int[]> examenesResueltos = new ArrayList<>();
         for(int i = 0; i < _handlesEstudiantes.length; i++){
-            examenesResueltos += _handlesEstudiantes[i].getEstudiante().getExamen();
+            examenesResueltos.add(_handlesEstudiantes[i].getEstudiante().getExamen());
+            
         }
         return null;
     }
