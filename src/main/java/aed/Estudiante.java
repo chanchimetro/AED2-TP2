@@ -38,6 +38,10 @@ public class Estudiante {
         return _cantRespuestasCorrectas;
     }
 
+    public void cambiarCopiarDW() {
+        this._copioDW = !_copioDW;
+    }
+
     public void entregarExamen(){
         _entrego = true;
         // compareTo, si entrego va abajo de todo 

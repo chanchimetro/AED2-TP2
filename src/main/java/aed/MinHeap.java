@@ -35,12 +35,15 @@ public class MinHeap {
                 index = bajar(index);
             }
         }
-
     }
 
     public MinHeap() {
         _size = 0;
         _lista = new Estudiante[_size];
+    }
+
+    public Estudiante devolverPrimerEstudiante(){
+        return _lista[0];
     }
 
     public int encolar(Estudiante est) {
