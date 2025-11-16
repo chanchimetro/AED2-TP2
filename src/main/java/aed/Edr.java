@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import aed.MinHeap.HandleMinHeap;
+import aed.NotaFinal;
 
 public class Edr {
 
@@ -126,57 +127,17 @@ public class Edr {
 
 //------------------------------------------------CONSULTAR DARK WEB-------------------------------------------------------
 
-    public void consultarDarkWeb(int n, int[] examenDW) {
-        // List<Estudiante> aUtilizarLaDW = new ArrayList<>();
-        // // Busco los n estudiantes de peor notas con menor Id
-        // for (int x = 0; x < n; x++){
-        //     Estudiante estDW = _heapEstudiantes.desencolar();
-        //     estDW.
-
-
-
-
-        //     provisoria.add(estDW);
-        //     int largo = 1;
-        //     while (true){
-        //         Estudiante estProv = _heapEstudiantes.desencolar();
-        //         if (estProv.getRespuestasCorrectas() == estDW.getRespuestasCorrectas()){
-        //             provisoria.add(estProv);
-        //             largo++;
-        //         } else {
-        //             _heapEstudiantes.encolar(estProv);
-        //             break;
-        //         }
-        //     }
-        //     // Obtengo el que tiene id mas bajo
-        //     int indiceDW = 0; 
-        //     for (int i = 0; i < largo - 1;i++ ){
-        //         if (provisoria.get(indiceDW).getId() > provisoria.get(i+1).getId()){
-        //             indiceDW = provisoria.get(i+1).getId();
-        //         }
-        //     }
-        //     // Devuelvo todos los que no me sirven
-        //     for (int i = 0; i < largo;i++ ){
-        //         if (indiceDW != provisoria.get(i).getId()){
-        //             _heapEstudiantes.encolar(provisoria.get(i));
-        //         }
-        //     }
-        //     // Me quedo con el estudiante correcto
-        //     aUtilizarLaDW.add(provisoria.get(indiceDW));
-        // }
-        // // Devuelvo los estudiantes al Heap
-        // for (int x = 0; x < n; x++){
-        //     _heapEstudiantes.encolar(aUtilizarLaDW.get(x));
-        // }
-        // // Modifico la nota
-        // for (int x = 0; x < n; x++){
-        //     for (int i = 0; i < examenDW.length; i++){
-        //         aUtilizarLaDW.get(x).cambiarExamen(i, examenDW[i], _examenCanonico);
-        //     }
-        // }
+        public void consultarDarkWeb(int n, int[] examenDW) {
+        for (int x = 0; x < n; x++){
+            Estudiante estudianteQueUsaDW = _heapEstudiantes.devolverPrimerEstudiante();
+            for (int i = 0; i < examenDW.length; i++){
+                estudianteQueUsaDW.cambiarExamen(i, examenDW[i], _examenCanonico);
+            }
+            estudianteQueUsaDW.cambiarCopiarDW();
+            _handlesEstudiantes[estudianteQueUsaDW.getId()].actualizarHeap();
+        }
     }
- 
-
+    
 //-------------------------------------------------ENTREGAR-------------------------------------------------------------
 
  
@@ -192,7 +153,23 @@ public class Edr {
 //-----------------------------------------------------CORREGIR---------------------------------------------------------
 
     public NotaFinal[] corregir() {
-        throw new UnsupportedOperationException("Sin implementar");
+
+        List<Estudiante> estudiantesOrdenados = new ArrayList<>();
+        int estudiantesQueNoSeCopiaron = _heapEstudiantes.size() - _handlesSospechosos.size();
+        for (int x = 0; x < estudiantesQueNoSeCopiaron; x++) {
+            estudiantesOrdenados.add(_heapEstudiantes.desencolar());
+        }
+        for (int x = 0; x < estudiantesQueNoSeCopiaron; x++) {
+            _heapEstudiantes.encolar(estudiantesOrdenados.get(x));
+        }
+        NotaFinal [] NotasOrdenadas = new NotaFinal[estudiantesOrdenados.size()];
+        for (int i = estudiantesOrdenados.size();0 < i;i--){
+            int id = estudiantesOrdenados.get(i).getId();
+            double nota = 100 * ((double) estudiantesOrdenados.get(i).getRespuestasCorrectas() / _examenCanonico.length);
+            NotaFinal a = new NotaFinal(nota, id );
+            NotasOrdenadas[i] = a;
+        }
+        return NotasOrdenadas;
     }
 
 //-------------------------------------------------------CHEQUEAR COPIAS-------------------------------------------------
