@@ -163,7 +163,7 @@ public class Edr {
             _heapEstudiantes.encolar(estudiantesOrdenados.get(x));
         }
         NotaFinal [] NotasOrdenadas = new NotaFinal[estudiantesOrdenados.size()];
-        for (int i = estudiantesOrdenados.size();0 < i;i--){
+        for (int i = estudiantesOrdenados.size()-1; 0 <= i; i--){
             int id = estudiantesOrdenados.get(i).getId();
             double nota = 100 * ((double) estudiantesOrdenados.get(i).getRespuestasCorrectas() / _examenCanonico.length);
             NotaFinal a = new NotaFinal(nota, id );

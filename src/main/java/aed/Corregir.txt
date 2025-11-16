@@ -1,0 +1,55 @@
+    public NotaFinal[] corregir() {
+        // Devuelve las notas de los examenes de los estudiantes que no se hayan copiado 
+        // ordenada por NotaFinal.nota de forma decreciente. 
+        // En caso de empate, se desempata por mayor NotaFinal.id de estudiante.
+        int [] copiados = chequearCopias();
+        List<Estudiante> provisoria = new ArrayList<>();
+        List<Estudiante> estudiantesOrdenados = new ArrayList<>();
+        // Me genero la lista de estudiantes ordenados por nota de mayor a menor
+        while (_heapEstudiantes.size() > 0) {
+            Estudiante est = _heapEstudiantes.desencolar();
+            provisoria.add(est);
+            if (!elEstudianteSeCopio(est,copiados)){
+                agregar(estudiantesOrdenados,est);
+            }
+        }
+        for (int i = 0;i<provisoria.size();i++){
+            _heapEstudiantes.encolar(provisoria.get(i));
+        }
+        NotaFinal [] NotasOrdenadas = new NotaFinal[estudiantesOrdenados.size()];
+        for (int i = 0;i<estudiantesOrdenados.size();i++){
+            int id = estudiantesOrdenados.get(i).getId();
+            double nota = 100 * ((double) estudiantesOrdenados.get(i).getRespuestasCorrectas() / _examenCanonico.length);
+            NotaFinal a = new NotaFinal(nota, id );
+            NotasOrdenadas[i] = a;
+        }
+        return NotasOrdenadas;
+    }
+    
+    private boolean elEstudianteSeCopio (Estudiante est, int [] copiados ){
+        for(int i = 0; i < copiados.length; i++){
+            if (copiados[i] == est.getId()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void agregar(List<Estudiante> estudiantesOrdenados, Estudiante est){
+        int indice = estudiantesOrdenados.size();
+        estudiantesOrdenados.add(est);
+        while (true){
+            //int indice = estudiantesOrdenados.indexOf(est);
+            if (indice == 0){
+                break;
+            } else if (est.getRespuestasCorrectas() != estudiantesOrdenados.get(indice - 1).getRespuestasCorrectas()){
+                break;
+            } else if (est.getId() > estudiantesOrdenados.get(indice - 1).getId()){
+                break;
+            } else {
+                estudiantesOrdenados.set(indice, estudiantesOrdenados.get(indice - 1));
+                estudiantesOrdenados.set(indice - 1, est);
+                indice--;
+            }
+        }
+    }
