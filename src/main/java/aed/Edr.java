@@ -1,5 +1,6 @@
 package aed;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import aed.MinHeap.HandleMinHeap;
@@ -66,7 +67,17 @@ public class Edr {
 //-------------------------------------------------NOTAS--------------------------------------------------------------------------
 
     public double[] notas(){
-        throw new UnsupportedOperationException("Sin implementar");
+        int E = _handlesEstudiantes.length;
+        int cantPreguntas = _examenCanonico.length;
+        double[] resultado = new double[E];
+        for (int i = 0; i < E;i++) {
+            Estudiante est = _handlesEstudiantes[i].getEstudiante();
+            resultado[i] = est._cantRespuestasCorrectas / cantPreguntas;
+        }
+        return resultado;
+
+       
+    }
     }
 
 //------------------------------------------------COPIARSE------------------------------------------------------------------------
@@ -127,7 +138,14 @@ public class Edr {
 //-------------------------------------------------ENTREGAR-------------------------------------------------------------
 
     public void entregar(int estudiante) {
-        throw new UnsupportedOperationException("Sin implementar");
+        int E = _handlesEstudiantes.length;
+        for (int i = 0; i < E; i++) {
+            if (estudiante == i) {
+                Estudiante est = _handlesEstudiantes[i].getEstudiante();
+                est._entrego = true;
+            }
+        }
+       
     }
 
 //-----------------------------------------------------CORREGIR---------------------------------------------------------
