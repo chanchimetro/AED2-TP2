@@ -178,12 +178,8 @@ public class Edr {
 
  
     public void entregar(int estudiante) {
-        for (int i = 0; i < _handlesEstudiantes.length; i++) {
-            if (estudiante == i) {
-                _handlesEstudiantes[i].getEstudiante().entregarExamen();
-            }
-        }
-       
+        Estudiante est = _handlesEstudiantes[estudiante].getEstudiante();
+        est._entrego = true;
     }
 
 //-----------------------------------------------------CORREGIR---------------------------------------------------------
