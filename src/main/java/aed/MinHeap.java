@@ -64,7 +64,7 @@ public class MinHeap {
 
     private int subir(int index) {
         while (index != 0 && _lista[padre(index)].compareTo(_lista[index]) > 0) {
-            Estudiante aux = new Estudiante(_lista[padre(index)]);
+            Estudiante aux = _lista[padre(index)];
 
             _lista[padre(index)] = _lista[index];
             _lista[index] = aux;

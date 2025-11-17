@@ -6,6 +6,7 @@ public class Estudiante {
     private int _cantRespuestasCorrectas;
     private int[] _examen;
     private boolean _copioDW;
+    private boolean _copioVecinos;
 
     public Estudiante(int id, int longExamen) {
         _id = id;
@@ -16,6 +17,7 @@ public class Estudiante {
             _examen[i] = -1;
         }
         _copioDW = false;
+        _copioVecinos = false;
     }
 
     public Estudiante(Estudiante est) {
@@ -23,7 +25,8 @@ public class Estudiante {
         _entrego = est._entrego;
         _cantRespuestasCorrectas = est._cantRespuestasCorrectas;
         _examen = est._examen.clone();
-        _copioDW = false;
+        _copioDW = est._copioDW;
+        _copioVecinos = est._copioVecinos;
     }
 
     public int[] getExamen() {
@@ -40,6 +43,10 @@ public class Estudiante {
 
     public void cambiarCopiarDW() {
         this._copioDW = !_copioDW;
+    }
+
+    public void cambiarCopiarVecino(){
+        this._copioVecinos = true;
     }
 
     public void entregarExamen(){
@@ -61,6 +68,11 @@ public class Estudiante {
         } else if(this._entrego == false && otro._entrego == true){
             res = -1;
         } else {
+            if(this._copioVecinos == true && otro._copioVecinos == false){
+                res = 1;
+            } else if(this._copioVecinos == false && otro._copioVecinos == true){
+                res = -1;
+            } else{
             if(this._copioDW == true &&  otro._copioDW == false){
                 res = 1; // donde estoy baja
             } else if(this._copioDW == false &&  otro._copioDW == true){
@@ -72,6 +84,7 @@ public class Estudiante {
                     res = otro._id - this._id ;
                 }
             }
+        }
         }
         // entregar -> DW -> criterio de nota -> ID orden de desempate 
         return res ; 

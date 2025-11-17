@@ -115,6 +115,7 @@ public class Edr {
             }
         }
         resolver(estudiante, primerRespuesta[0], primerRespuesta[1]);
+        _handlesEstudiantes[estudiante].getEstudiante().cambiarCopiarVecino();
     }
 
 
@@ -153,16 +154,17 @@ public class Edr {
 //-----------------------------------------------------CORREGIR---------------------------------------------------------
 
     public NotaFinal[] corregir() {
-
         List<Estudiante> estudiantesOrdenados = new ArrayList<>();
         int estudiantesQueNoSeCopiaron = _heapEstudiantes.size() - _handlesSospechosos.size();
+        
         for (int x = 0; x < estudiantesQueNoSeCopiaron; x++) {
             estudiantesOrdenados.add(_heapEstudiantes.desencolar());
         }
         for (int x = 0; x < estudiantesQueNoSeCopiaron; x++) {
             _heapEstudiantes.encolar(estudiantesOrdenados.get(x));
         }
-        NotaFinal [] NotasOrdenadas = new NotaFinal[estudiantesOrdenados.size()];
+        
+        NotaFinal[] NotasOrdenadas = new NotaFinal[estudiantesOrdenados.size()];
         for (int i = 0; i < estudiantesQueNoSeCopiaron; i++){
             int id = estudiantesOrdenados.get(i).getId();
             double nota = 100 * ((double) estudiantesOrdenados.get(i).getRespuestasCorrectas() / _examenCanonico.length);
@@ -179,37 +181,42 @@ public class Edr {
         // hacer una lista de listas con las respuestas de cada estudiante examenes
         // por respuesta comparar entre todos los estudiantes
         int[][] contadorRespuestas = new int[10][_examenCanonico.length];
-        
+
         for(int i = 0; i < contadorRespuestas.length; i++) {
-            for(int r = 0; r < contadorRespuestas[i].length; r++) {
-                int contador = 0;
-                for(int e = 0; e < _handlesEstudiantes.length; e++) {
-                    if(_handlesEstudiantes[e].getEstudiante().getExamen()[i] == r) {
-                        contador++;
-                    }
-                }
-                contadorRespuestas[i][r] = contador;
+            for(int r = 0; r < 10; r++) {
+                contadorRespuestas[i][r] = 0;
             }
         }
+        
+        for(int i = 0; i < _handlesEstudiantes.length; i++){
+            int[] examen = _handlesEstudiantes[i].getEstudiante().getExamen();
+            for(int r = 0; r < examen.length; r++) {
+                if (examen[r] != -1) {
+                    contadorRespuestas[r][examen[r]]++;
+                }
+            }
+        }
+
         // [[0,1,2,3,4,5,6,7,8,9], [0,1,2,3,4,5,6,7,8,9], [0,1,2,3,4,5,6,7,8,9]]
 
         for(int e = 0; e < _handlesEstudiantes.length; e++) {
             // chequear por pregunta si en el examen del estudiante la respuesta que puso es > al 25 o no sin contarlo
             boolean sospechoso = true;
             int r = 0;
+            int contadorVacio = 0;
 
             while(r < 10 && sospechoso == true) {
                 int res = _handlesEstudiantes[e].getEstudiante().getExamen()[r];
-
-                if(res != -1 && contadorRespuestas[r][res] - 1  <  (_handlesEstudiantes.length * 0.25)){
+                if(res == -1){
+                    contadorVacio++;
+                } else if( contadorRespuestas[r][res] - 1  <  (int)(_handlesEstudiantes.length / 4)){
                     sospechoso = false;
                 }
-
                 r++;
             }
-            if(sospechoso == true) {
+            if(sospechoso == true && contadorVacio < _examenCanonico.length) {
                 _handlesSospechosos.add(_handlesEstudiantes[e]);
-            }
+            } 
         }
 
         int[] ret = new int[_handlesSospechosos.size()];

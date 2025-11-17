@@ -273,7 +273,7 @@ class EdrTests {
             edr_9.resolver(0, pregunta, 5);
             edr_9.resolver(1, pregunta, 5);
             edr_9.resolver(2, pregunta, 5);
-        }
+        } 
 
         for(int pregunta = 5; pregunta < 9; pregunta++){
             edr_9.resolver(3, pregunta, pregunta);
