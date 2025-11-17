@@ -627,3 +627,74 @@ class EdrTests {
         assertTrue(Arrays.equals(notas_finales_esperadas, notas_finales));
     }
 }
+
+@Test
+    void alumnos_se_copian_del_de_adelante(){
+        edr = new Edr(4, 4, solucion);
+        double[] notas;
+        double[] notas_esperadas;
+
+        edr.resolver(0, 0, 0);
+        edr.resolver(0, 1, 1);
+        edr.resolver(0, 2, 2);
+        edr.resolver(0, 3, 3);
+
+        
+        notas = edr.notas();
+        notas_esperadas = new double[]{40.0, 0.0, 0.0, 0.0};
+        assertTrue(Arrays.equals(notas_esperadas, notas));
+        
+        edr.copiarse(1);
+        edr.copiarse(2);
+        edr.copiarse(2);
+        edr.copiarse(3);
+        
+        notas = edr.notas();
+        notas_esperadas = new double[]{40.0, 10.0, 20.0, 10.0};
+        assertTrue(Arrays.equals(notas_esperadas, notas));
+
+        edr.copiarse(3);
+        
+        notas = edr.notas();
+        notas_esperadas = new double[]{40.0, 10.0, 20.0, 20.0};
+        assertTrue(Arrays.equals(notas_esperadas, notas));
+        
+        edr.copiarse(2);
+        
+        notas = edr.notas();
+        notas_esperadas = new double[]{40.0, 10.0, 30.0, 20.0};
+        assertTrue(Arrays.equals(notas_esperadas, notas));
+
+        edr.resolver(1, 9, 7);
+        edr.resolver(1, 8, 6);
+        edr.resolver(1, 7, 7);
+        
+        edr.copiarse(3);
+
+        notas = edr.notas();
+        notas_esperadas = new double[]{40.0, 20.0, 30.0, 30.0};
+        assertTrue(Arrays.equals(notas_esperadas, notas));
+
+        edr.copiarse(3);
+
+        notas = edr.notas();
+        notas_esperadas = new double[]{40.0, 20.0, 30.0, 30.0};
+        assertTrue(Arrays.equals(notas_esperadas, notas));
+        
+        for(int alumno = 0; alumno < 4; alumno++){
+            edr.entregar(alumno);
+        }
+
+        int[] copiones = edr.chequearCopias();
+        int[] copiones_esperados = new int[]{2,3};
+        assertTrue(Arrays.equals(copiones_esperados, copiones));
+        
+        NotaFinal[] notas_finales = edr.corregir();
+        NotaFinal[] notas_finales_esperadas = new NotaFinal[]{
+            new NotaFinal(30.0, 1),
+            new NotaFinal(10.0, 0)
+        };
+
+        assertTrue(Arrays.equals(notas_finales_esperadas, notas_finales));
+        
+    }

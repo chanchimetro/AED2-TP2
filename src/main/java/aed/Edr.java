@@ -13,6 +13,7 @@ public class Edr {
     private int[] _examenCanonico;
     private ArrayList<HandleMinHeap> _handlesSospechosos;
 
+    
     public Edr(int LadoAula, int Cant_estudiantes, int[] ExamenCanonico) {
         _handlesEstudiantes = new HandleMinHeap[Cant_estudiantes];
         _handlesSospechosos = new ArrayList<HandleMinHeap>();
@@ -20,12 +21,13 @@ public class Edr {
         _ladoAula = LadoAula;
         _examenCanonico = ExamenCanonico;
         
-        for (int i = 0; i < Cant_estudiantes; i ++) {
-            Estudiante est = new Estudiante(i, ExamenCanonico.length);
+        for (int i = 0; i < Cant_estudiantes; i ++) {                           // O(E)
+            Estudiante est = new Estudiante(i, ExamenCanonico.length);          // O(R)
             int index = _heapEstudiantes.encolar(est);
             _handlesEstudiantes[i] = _heapEstudiantes.new HandleMinHeap(index);
         }
     }
+    // Complejidad -> O(E*R)
 
     private static int[] obtenerPosicion(int id, int n) {
         int columnasUsadas = (n+1) / 2;
@@ -34,12 +36,15 @@ public class Edr {
 
         return new int[]{fila, columna};
     }
+    // Complejidad -> O(1)
 
     private static int obtenerId(int fila, int colReal, int n) {
         int columnasUsadas = (n + 1) / 2;
         int col = colReal / 2;
         return fila * columnasUsadas + col;
     }
+    // Complejidad -> O(1)
+
 
     public static List<Integer> conseguirVecinos(int fila, int colReal, int n) {
         List<Integer> res = new ArrayList<>();
@@ -61,6 +66,7 @@ public class Edr {
 
         return res;
     }
+    // Complejidad -> O(1)
 
 
 
@@ -69,13 +75,14 @@ public class Edr {
     public double[] notas(){
         int cantPreguntas = _examenCanonico.length;
         double[] resultado = new double[_handlesEstudiantes.length];
-        for (int i = 0; i < _handlesEstudiantes.length; i++) {
+        for (int i = 0; i < _handlesEstudiantes.length; i++) {                                  // O(E)
             Estudiante estudiante = _handlesEstudiantes[i].getEstudiante();
             resultado[i] = 100 * ((double) estudiante.getRespuestasCorrectas() / cantPreguntas);
         }
         return resultado;
        
     }
+    // Complejidad -> O(E)
     
 //------------------------------------------------COPIARSE------------------------------------------------------------------------
 
@@ -92,13 +99,13 @@ public class Edr {
         int[] primerRespuesta = new int[2];
         int idVecino = 0; 
 
-        for(int i = 0; i < vecinos.size(); i++) {
+        for(int i = 0; i < vecinos.size(); i++) {                                       // O(v) -> como mucho 3 
             Estudiante vecino = _handlesEstudiantes[vecinos.get(i)].getEstudiante();
             int[] examenVecino = vecino.getExamen();
             int cantRespuestasAux = 0;
             int[] primerRespuestaAux = new int[2];
 
-            for(int x = 0; x < examenVecino.length; x++) {
+            for(int x = 0; x < examenVecino.length; x++) {                              // O(R)
                 if (examenEstudiante[x] == -1 && examenVecino[x] != -1){
                     if(cantRespuestasAux == 0){
                         primerRespuestaAux[0] = x;
@@ -114,42 +121,42 @@ public class Edr {
                 idVecino = vecino.getId();
             }
         }
-        resolver(estudiante, primerRespuesta[0], primerRespuesta[1]);
+        resolver(estudiante, primerRespuesta[0], primerRespuesta[1]);                   // O(log E)
         _handlesEstudiantes[estudiante].getEstudiante().cambiarCopiarVecino();
     }
+    // Complejidad -> O(R + log E)
 
 
 //-----------------------------------------------RESOLVER----------------------------------------------------------------
 
     public void resolver(int estudiante, int NroEjercicio, int res) {
         _handlesEstudiantes[estudiante].getEstudiante().cambiarExamen(NroEjercicio, res, _examenCanonico);
-        _handlesEstudiantes[estudiante].actualizarHeap();
+        _handlesEstudiantes[estudiante].actualizarHeap();                               // O(log E)
     }
+    // Complejidad -> O(log E)
 
 //------------------------------------------------CONSULTAR DARK WEB-------------------------------------------------------
 
         public void consultarDarkWeb(int n, int[] examenDW) {
-        for (int x = 0; x < n; x++){
+        for (int x = 0; x < n; x++){                                                     // O(k) -> Copiones DarkWeb
             Estudiante estudianteQueUsaDW = _heapEstudiantes.devolverPrimerEstudiante();
-            for (int i = 0; i < examenDW.length; i++){
+            for (int i = 0; i < examenDW.length; i++){                                      // O(R)
                 estudianteQueUsaDW.cambiarExamen(i, examenDW[i], _examenCanonico);
             }
             estudianteQueUsaDW.cambiarCopiarDW();
-            _handlesEstudiantes[estudianteQueUsaDW.getId()].actualizarHeap();
+            _handlesEstudiantes[estudianteQueUsaDW.getId()].actualizarHeap();               // O(log E)
         }
     }
+    // Complejidad -> O(K*(R+log E))
     
 //-------------------------------------------------ENTREGAR-------------------------------------------------------------
 
  
-    public void entregar(int estudiante) {
-        for (int i = 0; i < _handlesEstudiantes.length; i++) {
-            if (estudiante == i) {
-                _handlesEstudiantes[i].getEstudiante().entregarExamen();
-            }
-        }
-       
+    public void entregar(int estudiante) {              
+        _handlesEstudiantes[estudiante].getEstudiante().entregarExamen();
+        _handlesEstudiantes[estudiante].actualizarHeap();                               // O(log E)
     }
+    // Complejidad -> O(log E)
 
 //-----------------------------------------------------CORREGIR---------------------------------------------------------
 
@@ -173,16 +180,16 @@ public class Edr {
         }
         return NotasOrdenadas;
     }
+    // Complejidad -> O(E * log E)
 
 //-------------------------------------------------------CHEQUEAR COPIAS-------------------------------------------------
 
     public int[] chequearCopias() {
         // chequear que todos hayan terminado todos todos FALTA O(E)
-        // hacer una lista de listas con las respuestas de cada estudiante examenes
-        // por respuesta comparar entre todos los estudiantes
+
         int[][] contadorRespuestas = new int[10][_examenCanonico.length];
 
-        for(int i = 0; i < contadorRespuestas.length; i++) {
+        for(int i = 0; i < contadorRespuestas.length; i++) {                    // O(R)
             for(int r = 0; r < 10; r++) {
                 contadorRespuestas[i][r] = 0;
             }
@@ -197,10 +204,9 @@ public class Edr {
             }
         }
 
-        // [[0,1,2,3,4,5,6,7,8,9], [0,1,2,3,4,5,6,7,8,9], [0,1,2,3,4,5,6,7,8,9]]
-
-        for(int e = 0; e < _handlesEstudiantes.length; e++) {
-            // chequear por pregunta si en el examen del estudiante la respuesta que puso es > al 25 o no sin contarlo
+        for(int e = 0; e < _handlesEstudiantes.length; e++) {                       // O(E)
+            // chequear por pregunta si en el examen del estudiante 
+            //la respuesta que puso es > al 25 o no sin contarlo
             boolean sospechoso = true;
             int r = 0;
             int contadorVacio = 0;
@@ -226,6 +232,5 @@ public class Edr {
 
         return ret;
     }
-
-
+    // Complejidad -> O(E*R)
 }

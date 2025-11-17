@@ -13,7 +13,7 @@ public class Estudiante {
         _entrego = false;
         _cantRespuestasCorrectas = 0;
         _examen = new int[longExamen];
-        for(int i = 0; i < longExamen; i++){
+        for(int i = 0; i < longExamen; i++){        // O(R)
             _examen[i] = -1;
         }
         _copioDW = false;
