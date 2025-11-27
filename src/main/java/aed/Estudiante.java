@@ -49,6 +49,10 @@ public class Estudiante {
         this._copioVecinos = true;
     }
 
+    public void reiniciarExamen(){
+        this._cantRespuestasCorrectas = 0;
+    }
+
     public void entregarExamen(){
         _entrego = true;
         // compareTo, si entrego va abajo de todo 
@@ -67,26 +71,33 @@ public class Estudiante {
             res = 1;
         } else if(this._entrego == false && otro._entrego == true){
             res = -1;
-        } else {
+        } else if(this._entrego == false ) {
+            if ((this._cantRespuestasCorrectas) - (otro._cantRespuestasCorrectas) != 0) {
+                        res = (this._cantRespuestasCorrectas) - (otro._cantRespuestasCorrectas);
+                    } else {
+                        res = this._id - otro._id;
+                    }
+        } else{
+            // si ambos entregaron sortea por copiones antes de ver notas e id
             if(this._copioVecinos == true && otro._copioVecinos == false){
                 res = 1;
             } else if(this._copioVecinos == false && otro._copioVecinos == true){
                 res = -1;
             } else{
-            if(this._copioDW == true &&  otro._copioDW == false){
-                res = 1; // donde estoy baja
-            } else if(this._copioDW == false &&  otro._copioDW == true){
-                res = -1; // donde estoy sube (en un minheap)
-            } else {
-                if ((this._cantRespuestasCorrectas) - (otro._cantRespuestasCorrectas) != 0) {
-                    res = (this._cantRespuestasCorrectas) - (otro._cantRespuestasCorrectas);
+                if(this._copioDW == true &&  otro._copioDW == false){
+                    res = 1; // donde estoy baja
+                } else if(this._copioDW == false &&  otro._copioDW == true){
+                    res = -1; // donde estoy sube (en un minheap)
                 } else {
-                    res = otro._id - this._id ;
+                    if ((this._cantRespuestasCorrectas) - (otro._cantRespuestasCorrectas) != 0) {
+                        res = (this._cantRespuestasCorrectas) - (otro._cantRespuestasCorrectas);
+                    } else {
+                        res = this._id - otro._id;
+                    }
                 }
-            }
         }
         }
-        // entregar -> DW -> criterio de nota -> ID orden de desempate 
+        // entregar -> copio de vecinos -> copio de la DW -> criterio de nota -> ID orden de desempate 
         return res ; 
 
         // this - otro 

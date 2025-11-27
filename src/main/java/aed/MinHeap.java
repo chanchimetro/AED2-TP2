@@ -18,6 +18,10 @@ public class MinHeap {
             return _est;
         }
 
+        public void seCopio() {
+            _est.cambiarCopiarVecino();
+        }
+
         public void actualizarHeap() {
             // Buscar la posición actual del estudiante en el heap
             int posicionActual = -1;
@@ -104,6 +108,19 @@ public class MinHeap {
         }
         
         return ret;
+    }
+
+    public Estudiante[] conseguirKEstudiantes(int k) {
+        Estudiante[] res = new Estudiante[k];
+
+        for (int x = 0; x < k; x++) {
+            res[x] = this.desencolar();
+        }
+        for (int x = 0; x < k; x++) {
+            this.encolar(res[x]);
+        }
+
+        return res;
     }
 
 

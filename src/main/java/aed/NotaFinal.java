@@ -10,11 +10,13 @@ public class NotaFinal implements Comparable<NotaFinal> {
     }
 
     public int compareTo(NotaFinal otra){
-        if (otra._id != this._id){
-            return this._id - otra._id;
+        if (Double.compare(this._nota, otra._nota) != 0){
+            return Double.compare(this._nota, otra._nota);
         }
-        return Double.compare(this._nota, otra._nota);
+        return this._id - otra._id;
     }
+    // this tiene nota mas alta si > 
+
 
     @Override
     public boolean equals(Object otro) {

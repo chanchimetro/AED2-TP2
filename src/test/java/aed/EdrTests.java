@@ -626,7 +626,7 @@ class EdrTests {
 
         assertTrue(Arrays.equals(notas_finales_esperadas, notas_finales));
     }
-}
+
 
 @Test
     void alumnos_se_copian_del_de_adelante(){
@@ -695,6 +695,6 @@ class EdrTests {
             new NotaFinal(10.0, 0)
         };
 
-        assertTrue(Arrays.equals(notas_finales_esperadas, notas_finales));
-        
+        assertTrue(Arrays.equals(notas_finales_esperadas, notas_finales));        
     }
+}

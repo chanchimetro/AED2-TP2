@@ -122,7 +122,6 @@ public class Edr {
             }
         }
         resolver(estudiante, primerRespuesta[0], primerRespuesta[1]);                   // O(log E)
-        _handlesEstudiantes[estudiante].getEstudiante().cambiarCopiarVecino();
     }
     // Complejidad -> O(R + log E)
 
@@ -137,9 +136,12 @@ public class Edr {
 
 //------------------------------------------------CONSULTAR DARK WEB-------------------------------------------------------
 
-        public void consultarDarkWeb(int n, int[] examenDW) {
+    public void consultarDarkWeb(int n, int[] examenDW) {
+        Estudiante[] estudiantesDW = _heapEstudiantes.conseguirKEstudiantes(n);
+
         for (int x = 0; x < n; x++){                                                     // O(k) -> Copiones DarkWeb
-            Estudiante estudianteQueUsaDW = _heapEstudiantes.devolverPrimerEstudiante();
+            Estudiante estudianteQueUsaDW = estudiantesDW[x];
+            estudianteQueUsaDW.reiniciarExamen();
             for (int i = 0; i < examenDW.length; i++){                                      // O(R)
                 estudianteQueUsaDW.cambiarExamen(i, examenDW[i], _examenCanonico);
             }
@@ -161,25 +163,48 @@ public class Edr {
 //-----------------------------------------------------CORREGIR---------------------------------------------------------
 
     public NotaFinal[] corregir() {
-        List<Estudiante> estudiantesOrdenados = new ArrayList<>();
         int estudiantesQueNoSeCopiaron = _heapEstudiantes.size() - _handlesSospechosos.size();
+        Estudiante[] estudiantesOrdenados = new Estudiante[estudiantesQueNoSeCopiaron];
         
-        for (int x = 0; x < estudiantesQueNoSeCopiaron; x++) {
-            estudiantesOrdenados.add(_heapEstudiantes.desencolar());
-        }
-        for (int x = 0; x < estudiantesQueNoSeCopiaron; x++) {
-            _heapEstudiantes.encolar(estudiantesOrdenados.get(x));
-        }
+        estudiantesOrdenados = _heapEstudiantes.conseguirKEstudiantes(estudiantesQueNoSeCopiaron);
         
-        NotaFinal[] NotasOrdenadas = new NotaFinal[estudiantesOrdenados.size()];
-        for (int i = 0; i < estudiantesQueNoSeCopiaron; i++){
-            int id = estudiantesOrdenados.get(i).getId();
-            double nota = 100 * ((double) estudiantesOrdenados.get(i).getRespuestasCorrectas() / _examenCanonico.length);
-            NotaFinal a = new NotaFinal(nota, id );
-            NotasOrdenadas[i] = a;
+        
+        // NotaFinal[] NotasOrdenadas = new NotaFinal[estudiantesOrdenados.size()];
+        ListaEnlazada<NotaFinal> _NotasCorregidas = new ListaEnlazada<NotaFinal>();
+
+        NotaFinal Nota_Anterior = null;
+
+        for (int i = 0; i < estudiantesQueNoSeCopiaron; i++){                    // Complejidad E en el peor caso 
+            int id = estudiantesOrdenados[i].getId();
+            double nota = 100 * ((double) estudiantesOrdenados[i].getRespuestasCorrectas() / _examenCanonico.length);
+            NotaFinal Nota_actual = new NotaFinal(nota, id );
+
+            if( Nota_Anterior == null || Nota_actual.compareTo(Nota_Anterior) > 0){
+                _NotasCorregidas.agregarAdelante(Nota_actual);
+            } else {
+                _NotasCorregidas.agregarAtras(Nota_actual);
+            }
+            // Si tienen la misma nota el heap se encarga de ordenarlos decrecientemente por ID
+            // Si no tienen la misma nota significa que deben ir adelante 
+            Nota_Anterior = Nota_actual;
+        }
+
+        NotaFinal[] Array_NotasOrdenadas = ListaEnlazada_a_Array(_NotasCorregidas);
+
+        return Array_NotasOrdenadas;
+    }
+
+    private NotaFinal[] ListaEnlazada_a_Array(ListaEnlazada<NotaFinal> Notas_desordenadas){     
+        ListaEnlazada<NotaFinal>.ListaIterador Iterador_Notas = Notas_desordenadas.iterador();
+        NotaFinal[] NotasOrdenadas = new NotaFinal[Notas_desordenadas.longitud()];
+        int i = 0;
+        while( Iterador_Notas.haySiguiente()){                                              // Complejidad E en el peor caso 
+            NotasOrdenadas[i] = Iterador_Notas.siguiente();
+            i++;
         }
         return NotasOrdenadas;
     }
+
     // Complejidad -> O(E * log E)
 
 //-------------------------------------------------------CHEQUEAR COPIAS-------------------------------------------------
@@ -221,7 +246,10 @@ public class Edr {
                 r++;
             }
             if(sospechoso == true && contadorVacio < _examenCanonico.length) {
+                _handlesEstudiantes[e].seCopio();
                 _handlesSospechosos.add(_handlesEstudiantes[e]);
+                _handlesEstudiantes[e].getEstudiante().cambiarCopiarVecino();
+                _handlesEstudiantes[e].actualizarHeap();                               // O(log E)
             } 
         }
 
