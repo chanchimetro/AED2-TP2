@@ -1,33 +1,30 @@
 package aed;
 
+import java.util.ArrayList;
 
-public class MinHeap {
-    private Estudiante[] _lista;
-    private int _size;
+public class MinHeap<T extends Comparable<T>> {
+    private ArrayList<T> _lista;
+    //private int _size;
 
     public class HandleMinHeap {
         private int index;
-        private Estudiante _est;
+        private T _elem;
 
         public HandleMinHeap(int i) {
             index = i;
-            _est = _lista[index];
+            _elem = _lista.get(index);
         }
 
-        public Estudiante getEstudiante() {
-            return _est;
-        }
-
-        public void seCopio() {
-            _est.cambiarCopiarVecino();
+        public T getElemento() {
+            return _elem;
         }
 
         public void actualizarHeap() {
             // Buscar la posición actual del estudiante en el heap
             int posicionActual = -1;
             int i = 0;
-            while (i < _size && posicionActual == -1) {
-                if (_lista[i] == _est) {
+            while (i < _lista.size() && posicionActual == -1) {
+                if (_lista.get(i) == _elem) {
                     posicionActual = i;
                 }
                 i++;
@@ -42,36 +39,30 @@ public class MinHeap {
     }
 
     public MinHeap() {
-        _size = 0;
-        _lista = new Estudiante[_size];
+        _lista = new ArrayList<T>();
     }
 
-    public Estudiante devolverPrimerEstudiante(){
-        return _lista[0];
+    public T devolverPrimerEstudiante(){
+        return _lista.get(0);
     }
 
-    public int encolar(Estudiante est) {
-        Estudiante[] aux = new Estudiante[_size + 1];
-        
-        for (int i = 0; i < _size; i ++) {
-            aux[i] = _lista[i];
-        }
-        aux[_size] = est;
-        
-        _lista = aux;
-        int ret = subir(_size);
-        
-        _size += 1;
+    public int encolar(T elem) {
+        _lista.add(elem);
+        int ret = subir(_lista.size()-1);
 
         return ret;
     }
 
-    private int subir(int index) {
-        while (index != 0 && _lista[padre(index)].compareTo(_lista[index]) > 0) {
-            Estudiante aux = _lista[padre(index)];
+    public void encolarRapido(T elem) {
+        _lista.add(elem); 
+    }
 
-            _lista[padre(index)] = _lista[index];
-            _lista[index] = aux;
+    private int subir(int index) {
+        while (index != 0 && _lista.get(index) != null && _lista.get(padre(index)) != null && _lista.get(padre(index)).compareTo(_lista.get(index)) > 0) {
+            T aux = _lista.get(padre(index));
+
+            _lista.set(padre(index), _lista.get(index));
+            _lista.set(index, aux);
             index = padre(index);
         }
 
@@ -90,34 +81,29 @@ public class MinHeap {
         return ret;
     }
 
-    public Estudiante desencolar() {
-        Estudiante ret = _lista[0];
+    public T desencolar() {
+        T ret = _lista.get(0);
         
-        _lista[0] = _lista[_size - 1];
+        _lista.set(0, _lista.get(_lista.size() - 1));
         
-        Estudiante[] aux = new Estudiante[_size - 1];
-        for (int i = 0; i < _size-1; i ++) {
-            aux[i] = _lista[i];
-        }
+        _lista.remove(_lista.size() - 1);
 
-        _lista = aux;
-        _size -= 1;
         
-        if (_size > 0) {
+        if (_lista.size() > 0) {
             bajar(0);
         }
         
         return ret;
     }
 
-    public Estudiante[] conseguirKEstudiantes(int k) {
-        Estudiante[] res = new Estudiante[k];
+    public ArrayList<T> conseguirKEstudiantes(int k) {
+        ArrayList<T> res = new ArrayList<T>();
 
         for (int x = 0; x < k; x++) {
-            res[x] = this.desencolar();
+            res.add(this.desencolar());
         }
         for (int x = 0; x < k; x++) {
-            this.encolar(res[x]);
+            this.encolar(res.get(x));
         }
 
         return res;
@@ -125,19 +111,19 @@ public class MinHeap {
 
 
     private int bajar(int index) {
-        int ret = index;
-        while(!hoja(index) && (_lista[index].compareTo(_lista[hijoIzq(index)]) > 0 || 
-               (hijoDer(index) < _size && _lista[index].compareTo(_lista[hijoDer(index)]) > 0))) {
+       int ret = index;
+        while(!hoja(index) && (_lista.get(index).compareTo(_lista.get(hijoIzq(index))) > 0 || 
+               (hijoDer(index) < _lista.size() && _lista.get(index).compareTo(_lista.get(hijoDer(index))) > 0))) {
             int menor;
-            if(hijoDer(index) >= _size || _lista[hijoIzq(index)].compareTo(_lista[hijoDer(index)]) < 0) {
+            if(hijoDer(index) >= _lista.size() || _lista.get(hijoIzq(index)).compareTo(_lista.get(hijoDer(index))) < 0) {
                 menor = hijoIzq(index);
             } else {
                 menor = hijoDer(index);
             }
 
-            Estudiante aux = _lista[index];
-            _lista[index] = _lista[menor];
-            _lista[menor] = aux;
+            T aux = _lista.get(index);
+            _lista.set(index, _lista.get(menor));
+            _lista.set(menor, aux);
             index = menor;
             ret = menor;
         }
@@ -146,7 +132,7 @@ public class MinHeap {
     }
 
     private boolean hoja(int index) {
-        return hijoIzq(index) >= _size;
+        return hijoIzq(index) >= _lista.size();
     }
 
     private int hijoIzq(int index) {
@@ -158,10 +144,10 @@ public class MinHeap {
     }
 
     public boolean esVacio() {
-        return _size == 0;
+        return _lista.size() == 0;
     }
 
     public int size() {
-        return _size;
+        return _lista.size();
     }
 }

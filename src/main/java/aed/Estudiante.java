@@ -1,6 +1,6 @@
 package aed;
 
-public class Estudiante {
+public class Estudiante implements Comparable<Estudiante> {
     private int _id;
     private boolean _entrego;
     private int _cantRespuestasCorrectas;
@@ -65,6 +65,7 @@ public class Estudiante {
         }
     }
 
+    @Override
     public int compareTo(Estudiante otro) {
         int res = 0;
         if(this._entrego == true && otro._entrego == false){

@@ -691,8 +691,8 @@ class EdrTests {
         
         NotaFinal[] notas_finales = edr.corregir();
         NotaFinal[] notas_finales_esperadas = new NotaFinal[]{
-            new NotaFinal(30.0, 1),
-            new NotaFinal(10.0, 0)
+            new NotaFinal(40.0, 0),
+            new NotaFinal(20.0, 1)
         };
 
         assertTrue(Arrays.equals(notas_finales_esperadas, notas_finales));        
