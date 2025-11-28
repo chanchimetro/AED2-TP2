@@ -6,7 +6,7 @@ public class Estudiante implements Comparable<Estudiante> {
     private int _cantRespuestasCorrectas;
     private int[] _examen;
     private boolean _copioDW;
-    private boolean _copioVecinos;
+    private boolean _sospechosoCopiarse;
 
     public Estudiante(int id, int longExamen) {
         _id = id;
@@ -17,7 +17,7 @@ public class Estudiante implements Comparable<Estudiante> {
             _examen[i] = -1;
         }
         _copioDW = false;
-        _copioVecinos = false;
+        _sospechosoCopiarse = false;
     }
 
     public Estudiante(Estudiante est) {
@@ -26,11 +26,15 @@ public class Estudiante implements Comparable<Estudiante> {
         _cantRespuestasCorrectas = est._cantRespuestasCorrectas;
         _examen = est._examen.clone();
         _copioDW = est._copioDW;
-        _copioVecinos = est._copioVecinos;
+        _sospechosoCopiarse = est._sospechosoCopiarse;
     }
 
     public int[] getExamen() {
         return _examen;
+    }
+
+    public boolean entrego() {
+        return _entrego;
     }
 
     public int getId() {
@@ -50,8 +54,8 @@ public class Estudiante implements Comparable<Estudiante> {
         // cambia el compareTo
     }
 
-    public void cambiarCopiarVecino(){
-        this._copioVecinos = true;
+    public void cambiarSospechosoCopiarse(){
+        this._sospechosoCopiarse = true;
         // cambia el compareTo
     }
 
@@ -87,9 +91,9 @@ public class Estudiante implements Comparable<Estudiante> {
             }
         } else {
             // si ambos SI entregaron sortea por copiones antes de ver notas e id
-            if(this._copioVecinos == true && otro._copioVecinos == false){
+            if(this._sospechosoCopiarse == true && otro._sospechosoCopiarse == false){
                 res = 1;
-            } else if(this._copioVecinos == false && otro._copioVecinos == true){
+            } else if(this._sospechosoCopiarse == false && otro._sospechosoCopiarse == true){
                 res = -1;
             } else{
                 if(this._copioDW == true &&  otro._copioDW == false){

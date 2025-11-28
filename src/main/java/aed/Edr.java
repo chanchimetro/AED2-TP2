@@ -29,7 +29,7 @@ public class Edr {
         _cantEstudiantes = Cant_estudiantes;
         _seChequearonCopias = false;
         
-        for (int i = Cant_estudiantes - 1; i >= 0; i --) {                           // O(E)
+        for (int i = 0 ; i < Cant_estudiantes; i++) {                           // O(E)
             Estudiante est = new Estudiante(i, ExamenCanonico.length);          // O(R)
             _heapEstudiantes.encolarRapido(est);          // O(1)
             /*
@@ -37,7 +37,7 @@ public class Edr {
                 sin necesidad de encolar u ordenar el heap devuelta. Todos los estudiantes arrancan con la misma cant. de respuestas correctas (0)
                 e insertando los estudiantes por id decreciente es el orden correcto.
             */
-            _handlesEstudiantes[i] = _heapEstudiantes.new HandleMinHeap(Cant_estudiantes - i - 1);     // O(1)
+            _handlesEstudiantes[i] = _heapEstudiantes.new HandleMinHeap(i);     // O(1)
         }
     }
     // Complejidad -> O(E*R)
@@ -59,19 +59,23 @@ public class Edr {
     // Complejidad -> O(1)
 
 
-    public static List<Integer> conseguirVecinos(int fila, int colReal, int n) {
+    public List<Integer> conseguirVecinos(int fila, int colReal, int n) {
         List<Integer> res = new ArrayList<>();
+        int id;
 
-        if (fila > 0) {
-            res.add(obtenerId(fila - 1, colReal, n));
+        id = obtenerId(fila - 1, colReal, n);
+        if (fila > 0 && !((Estudiante) _handlesEstudiantes[id].getElemento()).entrego()) {
+            res.add(id);
         }
 
-        if (colReal - 2 >= 0) {
-            res.add(obtenerId(fila, colReal - 2, n));
+        id = obtenerId(fila, colReal - 2, n);
+        if (colReal - 2 >= 0 && !((Estudiante) _handlesEstudiantes[id].getElemento()).entrego()) {
+            res.add(id);
         }
 
-        if (colReal + 2 < n) {
-            res.add(obtenerId(fila, colReal + 2, n));
+        id = obtenerId(fila, colReal + 2, n);
+        if (colReal + 2 < n && !((Estudiante) _handlesEstudiantes[id].getElemento()).entrego()) {
+            res.add(id);
         }
 
         return res;
@@ -278,7 +282,7 @@ public class Edr {
                     r++;
                 }
                 if(sospechoso == true && contadorVacio < _examenCanonico.length) {
-                    ((Estudiante) _handlesEstudiantes[e].getElemento()).cambiarCopiarVecino();
+                    ((Estudiante) _handlesEstudiantes[e].getElemento()).cambiarSospechosoCopiarse();
                     _handlesSospechosos.add(_handlesEstudiantes[e]);
                     _handlesEstudiantes[e].actualizarHeap();                               // O(log E)
                 } 

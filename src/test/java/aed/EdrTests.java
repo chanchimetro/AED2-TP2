@@ -698,15 +698,15 @@ class EdrTests {
         assertTrue(Arrays.equals(notas_finales_esperadas, notas_finales));        
     }
 
-@Test
+    @Test
     void alumno_Copia_Todo_El_Examen() {
         edr = new Edr(d_aula,cant_alumnos,solucion);
         double[] notas;
         double[] notas_esperadas;
         //para 1 vecino completar todas las respuestas correctas asi se copia todas de el
-            for(int pregunta = 0; pregunta < 10; pregunta++){
-                edr.resolver(1, pregunta, pregunta);
-            }
+        for(int pregunta = 0; pregunta < 10; pregunta++){
+            edr.resolver(1, pregunta, pregunta);
+        }
         //edr.resolver(2,0,0);
         notas = edr.notas();
         notas_esperadas = new double[]{0.0, 100.0, 0.0, 0.0};
@@ -735,4 +735,6 @@ class EdrTests {
 
         assertTrue(Arrays.equals(notas_finales_esperadas, notas_finales));  
     }
+
+    // TEST: No se copia de vecinos que entregaron: el alumno que se copia deberia tener mas de un vecino del cual poder copiarse, el que tiene mas respuestas que el otro no, deberia entregar.
 }
