@@ -697,4 +697,42 @@ class EdrTests {
 
         assertTrue(Arrays.equals(notas_finales_esperadas, notas_finales));        
     }
+
+@Test
+    void alumno_Copia_Todo_El_Examen() {
+        edr = new Edr(d_aula,cant_alumnos,solucion);
+        double[] notas;
+        double[] notas_esperadas;
+        //para 1 vecino completar todas las respuestas correctas asi se copia todas de el
+            for(int pregunta = 0; pregunta < 10; pregunta++){
+                edr.resolver(1, pregunta, pregunta);
+            }
+        //edr.resolver(2,0,0);
+        notas = edr.notas();
+        notas_esperadas = new double[]{0.0, 100.0, 0.0, 0.0};
+        assertTrue(Arrays.equals(notas_esperadas, notas));
+        for (int i = 0; i < 10;i++) {
+            edr.copiarse(0);
+        }
+        
+        notas = edr.notas();
+        notas_esperadas = new double[] {100.0, 100.0, 0.0, 0.0};
+        assertTrue(Arrays.equals(notas_esperadas, notas));
+        
+        for(int alumno = 0; alumno < 4; alumno++){
+            edr.entregar(alumno);
+        }
+
+        int[] copiones = edr.chequearCopias();
+        int[] copionesESperados = new int[] {0,1};
+        assertTrue(Arrays.equals(copiones,copionesESperados));
+        
+        NotaFinal[] notas_finales = edr.corregir();
+        NotaFinal[] notas_finales_esperadas = new NotaFinal[]{
+            new NotaFinal(0.0, 3),         
+            new NotaFinal(0.0,2)
+        };
+
+        assertTrue(Arrays.equals(notas_finales_esperadas, notas_finales));  
+    }
 }

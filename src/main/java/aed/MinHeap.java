@@ -58,7 +58,10 @@ public class MinHeap<T extends Comparable<T>> {
     }
 
     private int subir(int index) {
-        while (index != 0 && _lista.get(index) != null && _lista.get(padre(index)) != null && _lista.get(padre(index)).compareTo(_lista.get(index)) > 0) {
+        while (
+                index != 0 && _lista.get(index) != null &&
+                _lista.get(padre(index)).compareTo(_lista.get(index)) > 0
+            ) {
             T aux = _lista.get(padre(index));
 
             _lista.set(padre(index), _lista.get(index));
@@ -96,7 +99,7 @@ public class MinHeap<T extends Comparable<T>> {
         return ret;
     }
 
-    public ArrayList<T> conseguirKEstudiantes(int k) {
+    public ArrayList<T> conseguirKElementos(int k) {
         ArrayList<T> res = new ArrayList<T>();
 
         for (int x = 0; x < k; x++) {

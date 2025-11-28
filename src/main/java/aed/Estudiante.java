@@ -41,21 +41,26 @@ public class Estudiante implements Comparable<Estudiante> {
         return _cantRespuestasCorrectas;
     }
 
-    public void cambiarCopiarDW() {
-        this._copioDW = !_copioDW;
-    }
-
-    public void cambiarCopiarVecino(){
-        this._copioVecinos = true;
-    }
-
     public void reiniciarExamen(){
         this._cantRespuestasCorrectas = 0;
     }
 
+    public void cambiarCopiarDW() {
+        this._copioDW = !_copioDW;
+        // cambia el compareTo
+    }
+
+    public void cambiarCopiarVecino(){
+        this._copioVecinos = true;
+        // cambia el compareTo
+    }
+
     public void entregarExamen(){
         _entrego = true;
-        // compareTo, si entrego va abajo de todo 
+        /*  
+            compareTo si entrego va abajo de todo, 
+            para evitar volver a desencolarlo en metodos que modifiquen el examen
+        */
     }
 
     public void cambiarExamen(int punto, int respuesta, int[] examenCanonico){
@@ -68,18 +73,20 @@ public class Estudiante implements Comparable<Estudiante> {
     @Override
     public int compareTo(Estudiante otro) {
         int res = 0;
+
         if(this._entrego == true && otro._entrego == false){
             res = 1;
         } else if(this._entrego == false && otro._entrego == true){
             res = -1;
-        } else if(this._entrego == false ) {
-            if ((this._cantRespuestasCorrectas) - (otro._cantRespuestasCorrectas) != 0) {
+        } else if( this._entrego == false ) { 
+            // si ambos NO entregaron ordeno por nota decreciente y desempato por ID 
+            if (this._cantRespuestasCorrectas - otro._cantRespuestasCorrectas != 0) {
                         res = (this._cantRespuestasCorrectas) - (otro._cantRespuestasCorrectas);
-                    } else {
-                        res = this._id - otro._id;
-                    }
-        } else{
-            // si ambos entregaron sortea por copiones antes de ver notas e id
+            } else {
+                res = this._id - otro._id;
+            }
+        } else {
+            // si ambos SI entregaron sortea por copiones antes de ver notas e id
             if(this._copioVecinos == true && otro._copioVecinos == false){
                 res = 1;
             } else if(this._copioVecinos == false && otro._copioVecinos == true){
@@ -94,16 +101,23 @@ public class Estudiante implements Comparable<Estudiante> {
                         res = (this._cantRespuestasCorrectas) - (otro._cantRespuestasCorrectas);
                     } else {
                         res = this._id - otro._id;
+                        // negativo -> este id < otro id
+                        // positivo -> este id > otro id 
+                                    // como los ids son únicos nunca van a ser iguales 
                     }
                 }
+            }
         }
-        }
-        // entregar -> copio de vecinos -> copio de la DW -> criterio de nota -> ID orden de desempate 
         return res ; 
+        /* 
+        ordenamos la lógica en torno a la nota 
 
-        // this - otro 
-            // negativo si this < otro
-            // Desempata por ID gana el de mayor ID
-            // positivo si this > otro
+            res > 0 --> "baja" en el heap 
+
+            Orden de prioridad de desempate 
+                entregar --> copio de vecino --> copio de la DW --> criterio de nota decreciente --> ID orden de desempate gana el mayor ID
+                
+            res < 0 --> "sube" en el heap
+        */ 
     }
 }
