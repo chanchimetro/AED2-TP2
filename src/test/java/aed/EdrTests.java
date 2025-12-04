@@ -876,6 +876,7 @@ class EdrTests {
         assertTrue(Arrays.equals(notas_finales_esperadas, notas_finales)); 
 
     }
+
     @Test
     void imposibilita_copiarse(){
         edr = new Edr(4, 4, solucion);
@@ -887,40 +888,48 @@ class EdrTests {
         for(int pregunta = 5; pregunta < 10; pregunta++) {
             edr.resolver(2,pregunta,pregunta);
         }
-        edr.resolver(3,9,9);
         edr.resolver(1,3,3);
         edr.resolver(1,1,1);
         edr.resolver(1,8,8);
 
-        notas_esperadas = new double [] { 60.0, 30.0, 50.0, 10.0};
-        notas = edr.notas();
-        assertTrue(Arrays.equals(notas,notas_esperadas));
+        edr.resolver(3,8,8);
 
-        //queremos que se intente copiar el alumno 1, hacer que los demas que mas tienen hayan entregado y comprobar que no se copio de ninguno
+        notas_esperadas = new double [] {60.0, 30.0, 50.0, 10.0};
+        notas = edr.notas();
+        assertTrue(Arrays.equals(notas, notas_esperadas));
+
+        /*  
+            0 - 1 -
+            2 - 3 -
+            - - - -
+            - - - -
+                    --> los vecinos del 3 son: el 1 y el 2 
+                        si bien el 2 tiene más respuestas 
+                        que el 3, como el 2 ya entregó,
+                        el 3 debería copiarse del 1
+        */
+
+        edr.entregar(1);
+        edr.copiarse(3);
+
+        notas = edr.notas();
+        notas_esperadas = new double[] {60.0, 30.0, 50.0, 30.0};
+
         edr.entregar(0);
         edr.entregar(2);
-        edr.entregar(1);
-        
-        edr.copiarse(3);
-        notas = edr.notas();
-        notas_esperadas = new double[] {60.0, 30.0, 50.0, 10.0};
-        
         edr.entregar(3);
-        //ver q no pudo copiarse porque todos entregaron
+
         int[] copiones = edr.chequearCopias();
-        int[] copiones_esperados = new int[] {};        //lo puse asi xq nose xq me da q se copia alguno
+        int[] copiones_esperados = new int[] {1, 3};        
         assertTrue(Arrays.equals(copiones_esperados, copiones));
 
         NotaFinal[] notas_finales = edr.corregir();
         NotaFinal[] notas_finales_esperadas = new NotaFinal[]{
             new NotaFinal(60.0, 0),
-            new NotaFinal(50.0,2),
-            new NotaFinal(30.0, 1),
-            new NotaFinal(10.0,3)
+            new NotaFinal(50.0, 2),
         };
+        // solo devuelve los que NO se copiaron 
 
         assertTrue(Arrays.equals(notas_finales_esperadas, notas_finales)); 
     }
-
-    // TEST: No se copia de vecinos que entregaron: el alumno que se copia deberia tener mas de un vecino del cual poder copiarse, el que tiene mas respuestas que el otro no, deberia entregar.
 }
