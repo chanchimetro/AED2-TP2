@@ -171,7 +171,6 @@ public class Edr {
                 estudianteQueUsaDW.cambiarExamen(i, examenDW[i], _examenCanonico);
             }
 
-            estudianteQueUsaDW.cambiarCopiarDW();
             _handlesEstudiantes[estudianteQueUsaDW.getId()].actualizarHeap();               // O(log E)
         }
     }

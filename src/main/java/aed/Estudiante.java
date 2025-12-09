@@ -5,7 +5,6 @@ public class Estudiante implements Comparable<Estudiante> {
     private boolean _entrego;
     private int _cantRespuestasCorrectas;
     private int[] _examen;
-    private boolean _copioDW;
     private boolean _sospechosoCopiarse;
 
     public Estudiante(int id, int longExamen) {
@@ -16,7 +15,6 @@ public class Estudiante implements Comparable<Estudiante> {
         for(int i = 0; i < longExamen; i++){        // O(R)
             _examen[i] = -1;
         }
-        _copioDW = false;
         _sospechosoCopiarse = false;
     }
 
@@ -25,7 +23,6 @@ public class Estudiante implements Comparable<Estudiante> {
         _entrego = est._entrego;
         _cantRespuestasCorrectas = est._cantRespuestasCorrectas;
         _examen = est._examen.clone();
-        _copioDW = est._copioDW;
         _sospechosoCopiarse = est._sospechosoCopiarse;
     }
 
@@ -47,11 +44,6 @@ public class Estudiante implements Comparable<Estudiante> {
 
     public void reiniciarExamen(){
         this._cantRespuestasCorrectas = 0;
-    }
-
-    public void cambiarCopiarDW() {
-        this._copioDW = !_copioDW;
-        // cambia el compareTo
     }
 
     public void cambiarSospechosoCopiarse(){
@@ -82,19 +74,23 @@ public class Estudiante implements Comparable<Estudiante> {
     @Override
     public int compareTo(Estudiante otro) {
         int res = 0;
-        // distintas las condiciones de entrega -> sabemos que uno es distinto del otro.
+        // Boolean.compare(a,b): si a (False) y b (True) devuelve < 0, si a (True) y b (False) devulve > 0
 
+        // primera prioridad si entrego
         if(this._entrego != otro._entrego){
             res = Boolean.compare(this._entrego, otro._entrego);
-            // this entrego -> 1 
         } else if( !this._entrego ) {
             res = comparar_por_nota_e_id(otro);
+
+        // si ambos ya entregaron primero chequea si se copió y luego compara por nota y después por id
         } else if(this._sospechosoCopiarse != otro._sospechosoCopiarse){
             res = Boolean.compare(this._sospechosoCopiarse, otro._sospechosoCopiarse);    
         } else {
             res = comparar_por_nota_e_id(otro); 
         }
         return res ;
+
+
         /*
         ordenamos la lógica en torno a la nota
 
@@ -108,7 +104,7 @@ public class Estudiante implements Comparable<Estudiante> {
     }
 
     private int comparar_por_nota_e_id(Estudiante otro){
-        // differencia notas 
+        // diferencia notas 
         // this tiene menor nota -> sube en el heap -> return < 0
         int res = (this._cantRespuestasCorrectas) - (otro._cantRespuestasCorrectas);
         if(res == 0){ // si las notas son iguales desempato por id
