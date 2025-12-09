@@ -14,6 +14,7 @@ public class Edr {
     private int[] _examenCanonico;
     private ArrayList<HandleMinHeap> _handlesSospechosos;
 
+    private int _estudiantesSospechosos; 
     private int _estudiantesQueEntregaron;
     private boolean _seChequearonCopias;
     private int _cantEstudiantes;
@@ -27,6 +28,7 @@ public class Edr {
         _ladoAula = LadoAula;
         _examenCanonico = ExamenCanonico;
 
+        _estudiantesSospechosos = 0;
         _estudiantesQueEntregaron = 0;
         _cantEstudiantes = Cant_estudiantes;
         _seChequearonCopias = false;
@@ -197,7 +199,7 @@ public class Edr {
 
     public NotaFinal[] corregir() {
         if(_seChequearonCopias){
-            int estudiantesQueNoSeCopiaron = _heapEstudiantes.size() - _handlesSospechosos.size();
+            int estudiantesQueNoSeCopiaron = _heapEstudiantes.size() - _estudiantesSospechosos;
             ArrayList<Estudiante> estudiantesOrdenados = new ArrayList<Estudiante>();
             
             estudiantesOrdenados = _heapEstudiantes.conseguirKElementos(estudiantesQueNoSeCopiaron);
@@ -294,14 +296,24 @@ public class Edr {
                 }
                 if(sospechoso == true && contadorVacio < _examenCanonico.length) {
                     ((Estudiante) _handlesEstudiantes[e].getElemento()).cambiarSospechosoCopiarse();
-                    _handlesSospechosos.add(_handlesEstudiantes[e]);
+                    _estudiantesSospechosos ++;
+                   // _handlesSospechosos.add(_handlesEstudiantes[e]);
                     _handlesEstudiantes[e].actualizarHeap();                               // O(log E)
                 } 
             }
 
-            int[] ret = new int[_handlesSospechosos.size()];
-            for(int i = 0; i < _handlesSospechosos.size(); i++) {
-                ret[i] = ((Estudiante) _handlesSospechosos.get(i).getElemento()).getId();
+            // int[] ret = new int[_handlesSospechosos.size()];
+            // for(int i = 0; i < _handlesSospechosos.size(); i++) {
+            //     ret[i] = ((Estudiante) _handlesSospechosos.get(i).getElemento()).getId();
+            // }
+
+            int[] ret = new int[_estudiantesSospechosos];
+            int index = 0;
+            for(int i = 0; i < _cantEstudiantes; i++) {                                         // O(E)
+                if(((Estudiante) _handlesEstudiantes[i].getElemento()).sospechosoCopiarse()){
+                    ret[index] = ((Estudiante) _handlesEstudiantes[i].getElemento()).getId();
+                    index ++;
+                }
             }
 
             _seChequearonCopias = true;
@@ -313,5 +325,6 @@ public class Edr {
             // si no entregaron todos los estudiantes no puedo chequear copias.
         }
     }
+    // O(E*R + E) = O(E*(R+1)) = O(E * R)
     // Complejidad -> O(E*R)
 }

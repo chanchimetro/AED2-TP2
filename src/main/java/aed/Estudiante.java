@@ -59,72 +59,62 @@ public class Estudiante implements Comparable<Estudiante> {
         // cambia el compareTo
     }
 
+    public boolean sospechosoCopiarse(){
+        return this._sospechosoCopiarse;
+    }
+
     public void entregarExamen(){
         _entrego = true;
-        /*  
-            compareTo si entrego va abajo de todo, 
+        /*
+            compareTo si entrego va abajo de todo,
             para evitar volver a desencolarlo en metodos que modifiquen el examen
         */
     }
 
     public void cambiarExamen(int punto, int respuesta, int[] examenCanonico){
-        _examen[punto] = respuesta; 
+        _examen[punto] = respuesta;
         if(examenCanonico[punto] == respuesta){
             _cantRespuestasCorrectas++;
         }
     }
 
+
     @Override
     public int compareTo(Estudiante otro) {
         int res = 0;
-        // distintas las condiciones de entrega -> sabemos que uno es distinto del otro. 
+        // distintas las condiciones de entrega -> sabemos que uno es distinto del otro.
 
-        if(this._entrego == true && otro._entrego == false){
-            res = 1;
-        } else if(this._entrego == false && otro._entrego == true){
-            res = -1;
-        } else if( this._entrego == false ) { 
-            // si ambos NO entregaron ordeno por nota decreciente y desempato por ID 
-            if (this._cantRespuestasCorrectas - otro._cantRespuestasCorrectas != 0) {
-                res = (this._cantRespuestasCorrectas) - (otro._cantRespuestasCorrectas);
-            } else {
-                res = this._id - otro._id;
-            }
+        if(this._entrego != otro._entrego){
+            res = Boolean.compare(this._entrego, otro._entrego);
+            // this entrego -> 1 
+        } else if( !this._entrego ) {
+            res = comparar_por_nota_e_id(otro);
+        } else if(this._sospechosoCopiarse != otro._sospechosoCopiarse){
+            res = Boolean.compare(this._sospechosoCopiarse, otro._sospechosoCopiarse);    
         } else {
-            // si ambos SI entregaron sortea por copiones antes de ver notas e id
-            if(this._sospechosoCopiarse == true && otro._sospechosoCopiarse == false){
-                res = 1;
-            } else if(this._sospechosoCopiarse == false && otro._sospechosoCopiarse == true){
-                res = -1;
-            } else{
-                // borrar comparación de copio DW -> el insertar debería devolver un handle
-                // edr debería guardarse en posicion estudiante ese nuevo handle 
-                if(this._copioDW == true &&  otro._copioDW == false){
-                    res = 1; // donde estoy baja
-                } else if(this._copioDW == false &&  otro._copioDW == true){
-                    res = -1; // donde estoy sube (en un minheap)
-                } else {
-                    if ((this._cantRespuestasCorrectas) - (otro._cantRespuestasCorrectas) != 0) {
-                        res = (this._cantRespuestasCorrectas) - (otro._cantRespuestasCorrectas);
-                    } else {
-                        res = this._id - otro._id;
-                        // negativo -> este id < otro id
-                        // positivo -> este id > otro id 
-                                    // como los ids son únicos nunca van a ser iguales 
-                    }
-                }
-            }
+            res = comparar_por_nota_e_id(otro); 
         }
-        return res ; 
-        /* 
-        ordenamos la lógica en torno a la nota 
+        return res ;
+        /*
+        ordenamos la lógica en torno a la nota
 
-            res > 0 --> "baja" en el heap 
+            res > 0 --> "baja" en el heap
 
-            Orden de prioridad de desempate 
+            Orden de prioridad de desempate
                 entregar --> copio de vecino --> copio de la DW --> criterio de nota decreciente --> ID orden de desempate gana el mayor ID
-                
+
             res < 0 --> "sube" en el heap
-        */ 
+        */
     }
+
+    private int comparar_por_nota_e_id(Estudiante otro){
+        // differencia notas 
+        // this tiene menor nota -> sube en el heap -> return < 0
+        int res = (this._cantRespuestasCorrectas) - (otro._cantRespuestasCorrectas);
+        if(res == 0){ // si las notas son iguales desempato por id
+        res = this._id - otro._id;
+        }
+        return res;
+    }
+
 }
