@@ -878,7 +878,7 @@ class EdrTests {
     }
 
     @Test
-    void imposibilita_copiarse(){
+    void imposibilita_copiarse_si_entrego(){
         edr = new Edr(4, 4, solucion);
         double [] notas;
         double [] notas_esperadas;

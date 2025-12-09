@@ -9,6 +9,7 @@ public class Edr {
 
     private MinHeap<Estudiante> _heapEstudiantes;
     private int _ladoAula;
+    // arreglo de handles de la interfaz -> 
     private HandleMinHeap[] _handlesEstudiantes;
     private int[] _examenCanonico;
     private ArrayList<HandleMinHeap> _handlesSospechosos;
@@ -20,6 +21,7 @@ public class Edr {
     
     public Edr(int LadoAula, int Cant_estudiantes, int[] ExamenCanonico) {
         _handlesEstudiantes = new HandleMinHeap[Cant_estudiantes];
+        // atributo de estudiante en vez de este handle
         _handlesSospechosos = new ArrayList<HandleMinHeap>();
         _heapEstudiantes = new MinHeap();
         _ladoAula = LadoAula;
@@ -32,6 +34,9 @@ public class Edr {
         for (int i = 0 ; i < Cant_estudiantes; i++) {                           // O(E)
             Estudiante est = new Estudiante(i, ExamenCanonico.length);          // O(R)
             _heapEstudiantes.encolarRapido(est);          // O(1)
+
+            // devuelve el handle -> son referencias distintas al mismo handle
+
             /*
                 Usamos encolar rapido, ya que en este caso puntual, podemos asegurar que insertando al fondo del heap se mantiene el orden buscado
                 sin necesidad de encolar u ordenar el heap devuelta. Todos los estudiantes arrancan con la misma cant. de respuestas correctas (0)
@@ -168,7 +173,13 @@ public class Edr {
             _handlesEstudiantes[estudianteQueUsaDW.getId()].actualizarHeap();               // O(log E)
         }
     }
+
     // Complejidad -> O(K*(R+log E))
+
+    // cuando se vuelven a agregar el estudiante nuevo con el examen modificado con el intersar 
+    // crear un handle -> lo quiero agregar al heap 
+    // lo pongo al final y lo hago subir. 
+    // ese handle lo tengo que devolver porque ese handle tiene que ir en la posicion de ese estudiante
     
 //-------------------------------------------------ENTREGAR-------------------------------------------------------------
 

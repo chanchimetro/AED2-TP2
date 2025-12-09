@@ -77,6 +77,7 @@ public class Estudiante implements Comparable<Estudiante> {
     @Override
     public int compareTo(Estudiante otro) {
         int res = 0;
+        // distintas las condiciones de entrega -> sabemos que uno es distinto del otro. 
 
         if(this._entrego == true && otro._entrego == false){
             res = 1;
@@ -85,7 +86,7 @@ public class Estudiante implements Comparable<Estudiante> {
         } else if( this._entrego == false ) { 
             // si ambos NO entregaron ordeno por nota decreciente y desempato por ID 
             if (this._cantRespuestasCorrectas - otro._cantRespuestasCorrectas != 0) {
-                        res = (this._cantRespuestasCorrectas) - (otro._cantRespuestasCorrectas);
+                res = (this._cantRespuestasCorrectas) - (otro._cantRespuestasCorrectas);
             } else {
                 res = this._id - otro._id;
             }
@@ -96,6 +97,8 @@ public class Estudiante implements Comparable<Estudiante> {
             } else if(this._sospechosoCopiarse == false && otro._sospechosoCopiarse == true){
                 res = -1;
             } else{
+                // borrar comparación de copio DW -> el insertar debería devolver un handle
+                // edr debería guardarse en posicion estudiante ese nuevo handle 
                 if(this._copioDW == true &&  otro._copioDW == false){
                     res = 1; // donde estoy baja
                 } else if(this._copioDW == false &&  otro._copioDW == true){

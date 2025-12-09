@@ -3,9 +3,12 @@ package aed;
 import java.util.ArrayList;
 
 public class MinHeap<T extends Comparable<T>> {
-    private ArrayList<T> _lista;
-    //private int _size;
+    private ArrayList<T> _lista; // arreglo de heaphandles<T>
 
+    //private int _size;
+    // interfaz con metodos para handles -> devolver valor y actualizar valor 
+        // interfaz independiente handle min heap implementa la interfaz con los métodos
+        //
     public class HandleMinHeap {
         private int index;
         private T _elem;
@@ -19,10 +22,12 @@ public class MinHeap<T extends Comparable<T>> {
             return _elem;
         }
 
-        public void actualizarHeap() {
+        public void actualizarHeap() { 
             // Buscar la posición actual del estudiante en el heap
             int posicionActual = -1;
             int i = 0;
+            // llamar a un método privado de heap 
+            // posición del handle o el propio handle -> heap va al indice en su propio arreglo
             while (i < _lista.size() && posicionActual == -1) {
                 if (_lista.get(i) == _elem) {
                     posicionActual = i;
@@ -56,6 +61,9 @@ public class MinHeap<T extends Comparable<T>> {
     public void encolarRapido(T elem) {
         _lista.add(elem); 
     }
+    // genera un handle para guardar en el arreglo 
+    // es lo que devuelve en el EDR
+    // ese handle lo devuelve para afuera
 
     private int subir(int index) {
         while (
