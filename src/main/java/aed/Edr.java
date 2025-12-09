@@ -9,10 +9,8 @@ public class Edr {
 
     private MinHeap<Estudiante> _heapEstudiantes;
     private int _ladoAula;
-    // arreglo de handles de la interfaz -> 
-    private HandleMinHeap[] _handlesEstudiantes;
+    private MinHeap<Estudiante>.HandleMinHeap<Estudiante>[] _handlesEstudiantes;
     private int[] _examenCanonico;
-    private ArrayList<HandleMinHeap> _handlesSospechosos;
 
     private int _estudiantesSospechosos; 
     private int _estudiantesQueEntregaron;
@@ -22,9 +20,7 @@ public class Edr {
     
     public Edr(int LadoAula, int Cant_estudiantes, int[] ExamenCanonico) {
         _handlesEstudiantes = new HandleMinHeap[Cant_estudiantes];
-        // atributo de estudiante en vez de este handle
-        _handlesSospechosos = new ArrayList<HandleMinHeap>();
-        _heapEstudiantes = new MinHeap();
+        _heapEstudiantes = new MinHeap<Estudiante>();
         _ladoAula = LadoAula;
         _examenCanonico = ExamenCanonico;
 
@@ -35,16 +31,13 @@ public class Edr {
         
         for (int i = 0 ; i < Cant_estudiantes; i++) {                           // O(E)
             Estudiante est = new Estudiante(i, ExamenCanonico.length);          // O(R)
-            _heapEstudiantes.encolarRapido(est);          // O(1)
-
-            // devuelve el handle -> son referencias distintas al mismo handle
-
+            _handlesEstudiantes[i] = (_heapEstudiantes.encolarRapido(i, est));          // O(1)
+            
             /*
                 Usamos encolar rapido, ya que en este caso puntual, podemos asegurar que insertando al fondo del heap se mantiene el orden buscado
                 sin necesidad de encolar u ordenar el heap devuelta. Todos los estudiantes arrancan con la misma cant. de respuestas correctas (0)
                 e insertando los estudiantes por id decreciente es el orden correcto.
             */
-            _handlesEstudiantes[i] = _heapEstudiantes.new HandleMinHeap(i);     // O(1)
         }
     }
     // Complejidad -> O(E*R)

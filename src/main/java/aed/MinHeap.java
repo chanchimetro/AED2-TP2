@@ -3,63 +3,98 @@ package aed;
 import java.util.ArrayList;
 
 public class MinHeap<T extends Comparable<T>> {
-    private ArrayList<T> _lista; // arreglo de heaphandles<T>
+    private ArrayList<HandleMinHeap<T>> _lista; // arreglo de heaphandles<T>
 
     //private int _size;
     // interfaz con metodos para handles -> devolver valor y actualizar valor 
         // interfaz independiente handle min heap implementa la interfaz con los métodos
-        //
-    public class HandleMinHeap {
-        private int index;
-        private T _elem;
+    
+        // Ahora todos los elementos de la lista que representa al arraylist son handles 
+    
+    public  class HandleMinHeap<U extends Comparable<U>> implements Handle<U> {
+        private int _posicion;
+        private U _elem;
 
-        public HandleMinHeap(int i) {
-            index = i;
-            _elem = _lista.get(index);
+        // agrego el elemento que quiero que sea porque mi handle debe tener todo 
+        private HandleMinHeap(int i, U elem) {
+            _posicion = i;
+            _elem = elem;
         }
 
-        public T getElemento() {
+        public U valor() {
             return _elem;
         }
 
-        public void actualizarHeap() { 
-            // Buscar la posición actual del estudiante en el heap
-            int posicionActual = -1;
-            int i = 0;
-            // llamar a un método privado de heap 
-            // posición del handle o el propio handle -> heap va al indice en su propio arreglo
-            while (i < _lista.size() && posicionActual == -1) {
-                if (_lista.get(i) == _elem) {
-                    posicionActual = i;
-                }
-                i++;
-            }
-            
-            if (posicionActual != -1) {
-                index = posicionActual;
-                index = subir(index);
-                index = bajar(index);
-            }
+        public int posicion() {
+            return _posicion;
         }
+
+        public U eliminar() {
+            _lista.remove(_posicion);
+            return _elem;
+        }
+
+        public void actualizar_valor() {
+            _posicion = actualizar_valor_en_heap(_posicion);
+        }
+
+        public void modificar_pos(int y){
+            this._posicion = y;
+        }
+
+
+        // public T getElemento() {
+        //     return _elem;
+        // }
+
+        // public void actualizarHeap() { 
+        //     // Buscar la posición actual del estudiante en el heap
+        //     int posicionActual = -1;
+        //     int i = 0;
+        //     // llamar a un método privado de heap 
+        //     // posición del handle o el propio handle -> heap va al indice en su propio arreglo
+        //     while (i < _lista.size() && posicionActual == -1) {
+        //         if (_lista.get(i) == _elem) {
+        //             posicionActual = i;
+        //         }
+        //         i++;
+        //     }
+            
+        //     if (posicionActual != -1) {
+        //         index = posicionActual;
+        //         index = subir(index);
+        //         index = bajar(index);
+        //     }
+        // }
+    }
+
+    private int actualizar_valor_en_heap(int index){
+        index = subir(index);
+        index = bajar(index);
+        // lo mueve en la heap y devuelve el indice 
+        return index;
     }
 
     public MinHeap() {
-        _lista = new ArrayList<T>();
+        _lista = new ArrayList<HandleMinHeap<T>>();
     }
 
     public T devolverPrimerEstudiante(){
-        return _lista.get(0);
+        return _lista.get(0).valor();
     }
 
     public int encolar(T elem) {
-        _lista.add(elem);
+        HandleMinHeap<T> handle = new HandleMinHeap(_lista.size(), elem);
+        _lista.add(handle);
         int ret = subir(_lista.size()-1);
 
         return ret;
     }
 
-    public void encolarRapido(T elem) {
-        _lista.add(elem); 
+    public HandleMinHeap<T> encolarRapido(int i, T elem) {
+        HandleMinHeap<T> handle = new HandleMinHeap(i, elem);
+        _lista.add(handle); 
+        return handle;
     }
     // genera un handle para guardar en el arreglo 
     // es lo que devuelve en el EDR
@@ -68,13 +103,13 @@ public class MinHeap<T extends Comparable<T>> {
     private int subir(int index) {
         while (
                 index != 0 && _lista.get(index) != null &&
-                _lista.get(padre(index)).compareTo(_lista.get(index)) > 0
+                _lista.get(padre(index)).valor().compareTo(_lista.get(index).valor()) > 0
             ) {
-            T aux = _lista.get(padre(index));
+            int indexPadre = _lista.get(padre(index)).posicion();
+            
+            intercambiar_posiciones(index, indexPadre);
 
-            _lista.set(padre(index), _lista.get(index));
-            _lista.set(index, aux);
-            index = padre(index);
+            index = indexPadre;
         }
 
         return index;
@@ -92,8 +127,16 @@ public class MinHeap<T extends Comparable<T>> {
         return ret;
     }
 
+    private void intercambiar_posiciones(int x, int y){
+        _lista.get(x).modificar_pos(y);
+        _lista.get(y).modificar_pos(x);
+        HandleMinHeap<T> aux = _lista.get(x);
+        _lista.set(x, _lista.get(y));
+        _lista.set(y, aux);
+    }
+
     public T desencolar() {
-        T ret = _lista.get(0);
+        T ret = _lista.get(0).valor();
         
         _lista.set(0, _lista.get(_lista.size() - 1));
         
@@ -107,14 +150,14 @@ public class MinHeap<T extends Comparable<T>> {
         return ret;
     }
 
-    public ArrayList<T> conseguirKElementos(int k) {
-        ArrayList<T> res = new ArrayList<T>();
+    public ArrayList<HandleMinHeap<T>> conseguirKElementos(int k) {
+        ArrayList<HandleMinHeap<T>> res = new ArrayList<HandleMinHeap<T>>();
 
         for (int x = 0; x < k; x++) {
-            res.add(this.desencolar());
+            res.add(new HandleMinHeap(x, this.desencolar()));
         }
         for (int x = 0; x < k; x++) {
-            this.encolar(res.get(x));
+            this.encolar(res.get(x).valor());
         }
 
         return res;
@@ -123,18 +166,18 @@ public class MinHeap<T extends Comparable<T>> {
 
     private int bajar(int index) {
        int ret = index;
-        while(!hoja(index) && (_lista.get(index).compareTo(_lista.get(hijoIzq(index))) > 0 || 
-               (hijoDer(index) < _lista.size() && _lista.get(index).compareTo(_lista.get(hijoDer(index))) > 0))) {
+        while(!hoja(index) && (_lista.get(index).valor().compareTo(_lista.get(hijoIzq(index)).valor()) > 0 || 
+               (hijoDer(index) < _lista.size() && _lista.get(index).valor().compareTo(_lista.get(hijoDer(index)).valor()) > 0))) {
             int menor;
-            if(hijoDer(index) >= _lista.size() || _lista.get(hijoIzq(index)).compareTo(_lista.get(hijoDer(index))) < 0) {
+            if(hijoDer(index) >= _lista.size() || _lista.get(hijoIzq(index)).valor().compareTo(_lista.get(hijoDer(index)).valor()) < 0) {
                 menor = hijoIzq(index);
             } else {
                 menor = hijoDer(index);
             }
 
-            T aux = _lista.get(index);
-            _lista.set(index, _lista.get(menor));
-            _lista.set(menor, aux);
+            intercambiar_posiciones(index, menor);
+
+
             index = menor;
             ret = menor;
         }
