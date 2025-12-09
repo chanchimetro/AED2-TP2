@@ -32,7 +32,7 @@ public class Edr {
         for (int i = 0 ; i < Cant_estudiantes; i++) {                           // O(E)
             Estudiante est = new Estudiante(i, ExamenCanonico.length);          // O(R)
             _handlesEstudiantes[i] = (_heapEstudiantes.encolarRapido(i, est));          // O(1)
-            
+
             /*
                 Usamos encolar rapido, ya que en este caso puntual, podemos asegurar que insertando al fondo del heap se mantiene el orden buscado
                 sin necesidad de encolar u ordenar el heap devuelta. Todos los estudiantes arrancan con la misma cant. de respuestas correctas (0)
@@ -64,17 +64,17 @@ public class Edr {
         int id;
 
         id = obtenerId(fila - 1, colReal, n);
-        if (fila > 0 && !((Estudiante) _handlesEstudiantes[id].getElemento()).entrego()) {
+        if (fila > 0 && !((Estudiante) _handlesEstudiantes[id].valor()).entrego()) {
             res.add(id);
         }
 
         id = obtenerId(fila, colReal - 2, n);
-        if (colReal - 2 >= 0 && !((Estudiante) _handlesEstudiantes[id].getElemento()).entrego()) {
+        if (colReal - 2 >= 0 && !((Estudiante) _handlesEstudiantes[id].valor()).entrego()) {
             res.add(id);
         }
 
         id = obtenerId(fila, colReal + 2, n);
-        if (colReal + 2 < n && !((Estudiante) _handlesEstudiantes[id].getElemento()).entrego()) {
+        if (colReal + 2 < n && !((Estudiante) _handlesEstudiantes[id].valor()).entrego()) {
             res.add(id);
         }
 
@@ -91,7 +91,7 @@ public class Edr {
         double[] resultado = new double[_handlesEstudiantes.length];
 
         for (int i = 0; i < _handlesEstudiantes.length; i++) {                                  // O(E)
-            Estudiante estudiante = (Estudiante) _handlesEstudiantes[i].getElemento();
+            Estudiante estudiante = (Estudiante) _handlesEstudiantes[i].valor();
             resultado[i] = 100 * ((double) estudiante.getRespuestasCorrectas() / cantPreguntas);
         }
 
@@ -105,7 +105,7 @@ public class Edr {
 
     public void copiarse(int estudiante) {
         int[] pos = obtenerPosicion(estudiante, _ladoAula);
-        int[] examenEstudiante = ((Estudiante) _handlesEstudiantes[estudiante].getElemento()).getExamen();
+        int[] examenEstudiante = ((Estudiante) _handlesEstudiantes[estudiante].valor()).getExamen();
 
         List<Integer> vecinos = conseguirVecinos(pos[0], pos[1], _ladoAula);
 
@@ -115,7 +115,7 @@ public class Edr {
         int idVecino = 0; 
 
         for(int i = 0; i < vecinos.size(); i++) {                                       // O(v) -> como mucho 3 
-            Estudiante vecino = (Estudiante) _handlesEstudiantes[vecinos.get(i)].getElemento();
+            Estudiante vecino = (Estudiante) _handlesEstudiantes[vecinos.get(i)].valor();
             int[] examenVecino = vecino.getExamen();
             int cantRespuestasAux = 0;
             int[] primerRespuestaAux = new int[2];
@@ -145,26 +145,26 @@ public class Edr {
 //-----------------------------------------------RESOLVER----------------------------------------------------------------
 
     public void resolver(int estudiante, int NroEjercicio, int res) {
-        ((Estudiante) _handlesEstudiantes[estudiante].getElemento()).cambiarExamen(NroEjercicio, res, _examenCanonico);
+        ((Estudiante) _handlesEstudiantes[estudiante].valor()).cambiarExamen(NroEjercicio, res, _examenCanonico);
 
-        _handlesEstudiantes[estudiante].actualizarHeap();                               // O(log E)
+        _handlesEstudiantes[estudiante].actualizar_valor();                               // O(log E)
     }
     // Complejidad -> O(log E)
 
 //------------------------------------------------CONSULTAR DARK WEB-------------------------------------------------------
 
     public void consultarDarkWeb(int n, int[] examenDW) {
-        ArrayList<Estudiante> estudiantesDW = _heapEstudiantes.conseguirKElementos(n);
+        ArrayList<MinHeap<Estudiante>.HandleMinHeap<Estudiante>> estudiantesDW = _heapEstudiantes.conseguirKElementos(n);
 
         for (int x = 0; x < n; x++){                                                     // O(k) -> Copiones DarkWeb
-            Estudiante estudianteQueUsaDW = estudiantesDW.get(x);
+            Estudiante estudianteQueUsaDW = estudiantesDW.get(x).valor();
             estudianteQueUsaDW.reiniciarExamen();
 
             for (int i = 0; i < examenDW.length; i++){                                      // O(R)
                 estudianteQueUsaDW.cambiarExamen(i, examenDW[i], _examenCanonico);
             }
 
-            _handlesEstudiantes[estudianteQueUsaDW.getId()].actualizarHeap();               // O(log E)
+            _handlesEstudiantes[estudianteQueUsaDW.getId()].actualizar_valor();               // O(log E)
         }
     }
 
@@ -179,9 +179,9 @@ public class Edr {
 
  
     public void entregar(int estudiante) {              
-        ((Estudiante) _handlesEstudiantes[estudiante].getElemento()).entregarExamen();
+        ((Estudiante) _handlesEstudiantes[estudiante].valor()).entregarExamen();
 
-        _handlesEstudiantes[estudiante].actualizarHeap();                               // O(log E)
+        _handlesEstudiantes[estudiante].actualizar_valor();                               // O(log E)
 
         _estudiantesQueEntregaron++;
     }
@@ -192,7 +192,7 @@ public class Edr {
     public NotaFinal[] corregir() {
         if(_seChequearonCopias){
             int estudiantesQueNoSeCopiaron = _heapEstudiantes.size() - _estudiantesSospechosos;
-            ArrayList<Estudiante> estudiantesOrdenados = new ArrayList<Estudiante>();
+            ArrayList<MinHeap<Estudiante>.HandleMinHeap<Estudiante>> estudiantesOrdenados = new ArrayList<MinHeap<Estudiante>.HandleMinHeap<Estudiante>>();
             
             estudiantesOrdenados = _heapEstudiantes.conseguirKElementos(estudiantesQueNoSeCopiaron);
             
@@ -202,8 +202,8 @@ public class Edr {
             NotaFinal Nota_Anterior = null;
 
             for (int i = 0; i < estudiantesQueNoSeCopiaron; i++){                    // O(E) ----> en el peor caso
-                int id = estudiantesOrdenados.get(i).getId();
-                double nota = 100 * ((double) estudiantesOrdenados.get(i).getRespuestasCorrectas() / _examenCanonico.length);
+                int id = estudiantesOrdenados.get(i).valor().getId();
+                double nota = 100 * ((double) estudiantesOrdenados.get(i).valor().getRespuestasCorrectas() / _examenCanonico.length);
                 NotaFinal Nota_actual = new NotaFinal(nota, id );
 
                 if( Nota_Anterior == null || Nota_actual.compareTo(Nota_Anterior) > 0){
@@ -259,7 +259,7 @@ public class Edr {
             }
             
             for(int i = 0; i < _handlesEstudiantes.length; i++){
-                int[] examen = ((Estudiante) _handlesEstudiantes[i].getElemento()).getExamen();
+                int[] examen = ((Estudiante) _handlesEstudiantes[i].valor()).getExamen();
                 for(int r = 0; r < examen.length; r++) {
                     if (examen[r] != -1) {
                         contadorRespuestas[r][examen[r]]++;
@@ -278,7 +278,7 @@ public class Edr {
                 int contadorVacio = 0;
 
                 while(r < 10 && sospechoso == true) {
-                    int res = ((Estudiante) _handlesEstudiantes[e].getElemento()).getExamen()[r];
+                    int res = ((Estudiante) _handlesEstudiantes[e].valor()).getExamen()[r];
                     if(res == -1){
                         contadorVacio++;
                     } else if( contadorRespuestas[r][res] - 1  <  (int)(_handlesEstudiantes.length / 4)){
@@ -287,10 +287,10 @@ public class Edr {
                     r++;
                 }
                 if(sospechoso == true && contadorVacio < _examenCanonico.length) {
-                    ((Estudiante) _handlesEstudiantes[e].getElemento()).cambiarSospechosoCopiarse();
+                    ((Estudiante) _handlesEstudiantes[e].valor()).cambiarSospechosoCopiarse();
                     _estudiantesSospechosos ++;
                    // _handlesSospechosos.add(_handlesEstudiantes[e]);
-                    _handlesEstudiantes[e].actualizarHeap();                               // O(log E)
+                    _handlesEstudiantes[e].actualizar_valor();                               // O(log E)
                 } 
             }
 
@@ -302,8 +302,8 @@ public class Edr {
             int[] ret = new int[_estudiantesSospechosos];
             int index = 0;
             for(int i = 0; i < _cantEstudiantes; i++) {                                         // O(E)
-                if(((Estudiante) _handlesEstudiantes[i].getElemento()).sospechosoCopiarse()){
-                    ret[index] = ((Estudiante) _handlesEstudiantes[i].getElemento()).getId();
+                if(((Estudiante) _handlesEstudiantes[i].valor()).sospechosoCopiarse()){
+                    ret[index] = ((Estudiante) _handlesEstudiantes[i].valor()).getId();
                     index ++;
                 }
             }
