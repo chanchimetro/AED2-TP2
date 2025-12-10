@@ -5,10 +5,8 @@ import java.util.ArrayList;
 public class MinHeap<T extends Comparable<T>> {
     private ArrayList<HandleMinHeap<T>> _lista; // arreglo de heaphandles<T>
 
-    //private int _size;
     // interfaz con metodos para handles -> devolver valor y actualizar valor 
         // interfaz independiente handle min heap implementa la interfaz con los métodos
-    
         // Ahora todos los elementos de la lista que representa al arraylist son handles 
     
     public  class HandleMinHeap<U extends Comparable<U>> implements Handle<U> {
@@ -25,10 +23,7 @@ public class MinHeap<T extends Comparable<T>> {
             return _elem;
         }
 
-        public int posicion() {
-            return _posicion;
-        }
-
+        // chequear cuando funcione si hace falta (creo que no)
         public U eliminar() {
             _lista.remove(_posicion);
             return _elem;
@@ -37,35 +32,17 @@ public class MinHeap<T extends Comparable<T>> {
         public void actualizar_valor() {
             _posicion = actualizar_valor_en_heap(_posicion);
         }
+        // llamar a un método privado del heap 
+        // posición del heap o de su propio handle
 
-        public void modificar_pos(int y){
+        public int posicion() {
+            return _posicion;
+        }
+
+        private void settear_posicion(int y){
             this._posicion = y;
         }
 
-
-        // public T getElemento() {
-        //     return _elem;
-        // }
-
-        // public void actualizarHeap() { 
-        //     // Buscar la posición actual del estudiante en el heap
-        //     int posicionActual = -1;
-        //     int i = 0;
-        //     // llamar a un método privado de heap 
-        //     // posición del handle o el propio handle -> heap va al indice en su propio arreglo
-        //     while (i < _lista.size() && posicionActual == -1) {
-        //         if (_lista.get(i) == _elem) {
-        //             posicionActual = i;
-        //         }
-        //         i++;
-        //     }
-            
-        //     if (posicionActual != -1) {
-        //         index = posicionActual;
-        //         index = subir(index);
-        //         index = bajar(index);
-        //     }
-        // }
     }
 
     private int actualizar_valor_en_heap(int index){
@@ -79,14 +56,16 @@ public class MinHeap<T extends Comparable<T>> {
         _lista = new ArrayList<HandleMinHeap<T>>();
     }
 
-    public T devolverPrimerEstudiante(){
-        return _lista.get(0).valor();
+    public T minimo(){
+        return (T)_lista.get(0);
     }
 
     public int encolar(T elem) {
         HandleMinHeap<T> handle = new HandleMinHeap(_lista.size(), elem);
         _lista.add(handle);
+
         int ret = subir(_lista.size()-1);
+        handle.settear_posicion(ret);
 
         return ret;
     }
@@ -103,7 +82,7 @@ public class MinHeap<T extends Comparable<T>> {
     private int subir(int index) {
         while (
                 index != 0 && _lista.get(index) != null &&
-                _lista.get(padre(index)).valor().compareTo(_lista.get(index).valor()) > 0
+                (_lista.get(padre(index)).valor()).compareTo(_lista.get(index).valor()) > 0
             ) {
             int indexPadre = _lista.get(padre(index)).posicion();
             
@@ -128,17 +107,24 @@ public class MinHeap<T extends Comparable<T>> {
     }
 
     private void intercambiar_posiciones(int x, int y){
-        _lista.get(x).modificar_pos(y);
-        _lista.get(y).modificar_pos(x);
+        _lista.get(x).settear_posicion(y);
+        _lista.get(y).settear_posicion(x);
         HandleMinHeap<T> aux = _lista.get(x);
         _lista.set(x, _lista.get(y));
         _lista.set(y, aux);
     }
 
+    // que pasa con los alumnos que estan entre medio de los que intercambié 
+
     public T desencolar() {
         T ret = _lista.get(0).valor();
+
+        // modifico el valor tanto en el heap como en el handle 
+        HandleMinHeap<T> ultimoHandle =  _lista.get(_lista.size() - 1);
+        _lista.set(0, ultimoHandle);
+        ultimoHandle.settear_posicion(0);
         
-        _lista.set(0, _lista.get(_lista.size() - 1));
+        //_lista.set(0, _lista.get(_lista.size() - 1));
         
         _lista.remove(_lista.size() - 1);
 
@@ -150,23 +136,28 @@ public class MinHeap<T extends Comparable<T>> {
         return ret;
     }
 
-    public ArrayList<HandleMinHeap<T>> conseguirKElementos(int k) {
-        ArrayList<HandleMinHeap<T>> res = new ArrayList<HandleMinHeap<T>>();
+    // public ArrayList<HandleMinHeap<T>> conseguirKElementos(int k) {
+    //     ArrayList<HandleMinHeap<T>> primerosHandles = new ArrayList<HandleMinHeap<T>>();
 
-        for (int x = 0; x < k; x++) {
-            res.add(new HandleMinHeap(x, this.desencolar()));
-        }
-        for (int x = 0; x < k; x++) {
-            this.encolar(res.get(x).valor());
-        }
+    //     for (int x = 0; x < k; x++) {
+    //         primerosHandles.add(_lista.get(0));
+    //         desencolar();
+    //     }
+    //     for (int x = 0 ; x < k; x++) {
+    //         _lista.add(primerosHandles.get(x));
+    //         int posFinal = subir(_lista.size()-1);
+    //         primerosHandles.get(x).settear_posicion(posFinal);
+    //     }
 
-        return res;
-    }
+    //     return primerosHandles;
+    // }
+
 
 
     private int bajar(int index) {
        int ret = index;
-        while(!hoja(index) && (_lista.get(index).valor().compareTo(_lista.get(hijoIzq(index)).valor()) > 0 || 
+        while(!hoja(index) 
+            && (_lista.get(index).valor().compareTo(_lista.get(hijoIzq(index)).valor()) > 0 || 
                (hijoDer(index) < _lista.size() && _lista.get(index).valor().compareTo(_lista.get(hijoDer(index)).valor()) > 0))) {
             int menor;
             if(hijoDer(index) >= _lista.size() || _lista.get(hijoIzq(index)).valor().compareTo(_lista.get(hijoDer(index)).valor()) < 0) {
