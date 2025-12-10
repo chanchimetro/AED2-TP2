@@ -14,9 +14,9 @@ public interface Handle<T extends Comparable<T>> { // generico
     T eliminar();
 
     
-    // /**
-    //  * Actualiza el heap en el que se encuentra el handle 
-    //  * 
-    //  */
-    //  void actualizar_valor();
+    /**
+     * Actualiza el heap en el que se encuentra el handle 
+     * 
+     */
+     void actualizar_valor();
 }
