@@ -63,7 +63,7 @@ public class MinHeap<T extends Comparable<T>> {
     public int encolar(T elem) {
         HandleMinHeap<T> handle = new HandleMinHeap(_lista.size(), elem);
         _lista.add(handle);
-        
+
         int ret = subir(_lista.size()-1);
         handle.settear_posicion(ret);
 
@@ -137,17 +137,22 @@ public class MinHeap<T extends Comparable<T>> {
     }
 
     public ArrayList<HandleMinHeap<T>> conseguirKElementos(int k) {
-        ArrayList<HandleMinHeap<T>> res = new ArrayList<HandleMinHeap<T>>();
+        ArrayList<HandleMinHeap<T>> primerosHandles = new ArrayList<HandleMinHeap<T>>();
 
         for (int x = 0; x < k; x++) {
-            res.add(new HandleMinHeap(x, this.desencolar()));
+            primerosHandles.add(_lista.get(0));
+            desencolar();
         }
         for (int x = 0 ; x < k; x++) {
-            this.encolar(res.get(x).valor());
+            _lista.add(primerosHandles.get(x));
+            int posFinal = subir(_lista.size()-1);
+            primerosHandles.get(x).settear_posicion(posFinal);
         }
-
-        return res;
+        
+        return primerosHandles;
     }
+
+
 
 
     private int bajar(int index) {
