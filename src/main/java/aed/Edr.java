@@ -154,17 +154,23 @@ public class Edr {
 //------------------------------------------------CONSULTAR DARK WEB-------------------------------------------------------
 
     public void consultarDarkWeb(int n, int[] examenDW) {
-        ArrayList<MinHeap<Estudiante>.HandleMinHeap<Estudiante>> estudiantesDW = _heapEstudiantes.conseguirKElementos(n);
+        int[] ids_desencolados = new int[n];
+
+        for (int x = 0; x < n; x++){
+            Estudiante estudiante_peor_nota = _heapEstudiantes.desencolar();
+            ids_desencolados[x] = estudiante_peor_nota.getId();
+        }
 
         for (int x = 0; x < n; x++){                                                     // O(k) -> Copiones DarkWeb
-            Estudiante estudianteQueUsaDW = estudiantesDW.get(x).valor();
+            int id_desencolado = ids_desencolados[x];
+            Estudiante estudianteQueUsaDW = _handlesEstudiantes[id_desencolado].valor();
             estudianteQueUsaDW.reiniciarExamen();
 
             for (int i = 0; i < examenDW.length; i++){                                      // O(R)
                 estudianteQueUsaDW.cambiarExamen(i, examenDW[i], _examenCanonico);
             }
 
-            _handlesEstudiantes[estudianteQueUsaDW.getId()].actualizar_valor();               // O(log E)
+            _handlesEstudiantes[id_desencolado] = _heapEstudiantes.encolar(estudianteQueUsaDW);                // O(log E)
         }
     }
 
@@ -192,19 +198,24 @@ public class Edr {
     public NotaFinal[] corregir() {
         if(_seChequearonCopias){
             int estudiantesQueNoSeCopiaron = _heapEstudiantes.size() - _estudiantesSospechosos;
-            ArrayList<MinHeap<Estudiante>.HandleMinHeap<Estudiante>> estudiantesOrdenados = new ArrayList<MinHeap<Estudiante>.HandleMinHeap<Estudiante>>();
+            // ArrayList<MinHeap<Estudiante>.HandleMinHeap<Estudiante>> estudiantesOrdenados = new ArrayList<MinHeap<Estudiante>.HandleMinHeap<Estudiante>>();
             
-            estudiantesOrdenados = _heapEstudiantes.conseguirKElementos(estudiantesQueNoSeCopiaron);
-            
+            // estudiantesOrdenados = _heapEstudiantes.conseguirKElementos(estudiantesQueNoSeCopiaron);
             
             ListaEnlazada<NotaFinal> _NotasCorregidas = new ListaEnlazada<NotaFinal>();
 
             NotaFinal Nota_Anterior = null;
 
             for (int i = 0; i < estudiantesQueNoSeCopiaron; i++){                    // O(E) ----> en el peor caso
-                int id = estudiantesOrdenados.get(i).valor().getId();
-                double nota = 100 * ((double) estudiantesOrdenados.get(i).valor().getRespuestasCorrectas() / _examenCanonico.length);
+                // int id = estudiantesOrdenados.get(i).valor().getId();
+                // double nota = 100 * ((double) estudiantesOrdenados.get(i).valor().getRespuestasCorrectas() / _examenCanonico.length);
+                // NotaFinal Nota_actual = new NotaFinal(nota, id );
+
+                int id = _heapEstudiantes.minimo().valor().getId();
+                double nota = 100 * ((double) _heapEstudiantes.minimo().valor().getRespuestasCorrectas() / _examenCanonico.length);
                 NotaFinal Nota_actual = new NotaFinal(nota, id );
+                _heapEstudiantes.minimo().valor().corregido();
+                _handlesEstudiantes[id].actualizar_valor();                               // O(log E)
 
                 if( Nota_Anterior == null || Nota_actual.compareTo(Nota_Anterior) > 0){
                     _NotasCorregidas.agregarAdelante(Nota_actual);

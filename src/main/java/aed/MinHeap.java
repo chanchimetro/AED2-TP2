@@ -56,18 +56,18 @@ public class MinHeap<T extends Comparable<T>> {
         _lista = new ArrayList<HandleMinHeap<T>>();
     }
 
-    // public T devolverPrimerEstudiante(){
-    //     return _lista.get(0).valor();
-    // }
+    public HandleMinHeap<T> minimo(){
+        return _lista.get(0);
+    }
 
-    public int encolar(T elem) {
+    public HandleMinHeap<T> encolar(T elem) {
         HandleMinHeap<T> handle = new HandleMinHeap(_lista.size(), elem);
         _lista.add(handle);
 
         int ret = subir(_lista.size()-1);
         handle.settear_posicion(ret);
 
-        return ret;
+        return handle;
     }
 
     public HandleMinHeap<T> encolarRapido(int i, T elem) {
@@ -148,10 +148,9 @@ public class MinHeap<T extends Comparable<T>> {
             int posFinal = subir(_lista.size()-1);
             primerosHandles.get(x).settear_posicion(posFinal);
         }
-        
+
         return primerosHandles;
     }
-
 
 
 
