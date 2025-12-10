@@ -198,42 +198,31 @@ public class Edr {
     public NotaFinal[] corregir() {
         if(_seChequearonCopias){
             int estudiantesQueNoSeCopiaron = _heapEstudiantes.size() - _estudiantesSospechosos;
-            // ArrayList<MinHeap<Estudiante>.HandleMinHeap<Estudiante>> estudiantesOrdenados = new ArrayList<MinHeap<Estudiante>.HandleMinHeap<Estudiante>>();
-            
-            // estudiantesOrdenados = _heapEstudiantes.conseguirKElementos(estudiantesQueNoSeCopiaron);
-            
-            ListaEnlazada<NotaFinal> _NotasCorregidas = new ListaEnlazada<NotaFinal>();
+            ArrayList<NotaFinal> _NotasCorregidas = new ArrayList<NotaFinal>(estudiantesQueNoSeCopiaron);
 
             NotaFinal Nota_Anterior = null;
 
-            for (int i = 0; i < estudiantesQueNoSeCopiaron; i++){                    // O(E) ----> en el peor caso
-                // int id = estudiantesOrdenados.get(i).valor().getId();
-                // double nota = 100 * ((double) estudiantesOrdenados.get(i).valor().getRespuestasCorrectas() / _examenCanonico.length);
-                // NotaFinal Nota_actual = new NotaFinal(nota, id );
+            for (int i = 0; i < estudiantesQueNoSeCopiaron; i++){                    
+                Estudiante estudianteACorregir = _heapEstudiantes.desencolar();
+                if (!estudianteACorregir.sospechosoCopiarse()){
+                    int id = estudianteACorregir.getId();
+                    double nota = 100 * ((double) estudianteACorregir.getRespuestasCorrectas() / _examenCanonico.length);
+                    NotaFinal Nota_actual = new NotaFinal(nota, id );
 
-                int id = _heapEstudiantes.minimo().valor().getId();
-                double nota = 100 * ((double) _heapEstudiantes.minimo().valor().getRespuestasCorrectas() / _examenCanonico.length);
-                NotaFinal Nota_actual = new NotaFinal(nota, id );
-                _heapEstudiantes.minimo().valor().corregido();
-                _handlesEstudiantes[id].actualizar_valor();                               // O(log E)
-
-                if( Nota_Anterior == null || Nota_actual.compareTo(Nota_Anterior) > 0){
-                    _NotasCorregidas.agregarAdelante(Nota_actual);
-                } else {
-                    _NotasCorregidas.agregarAtras(Nota_actual);
-                }
+                    if( Nota_Anterior == null || Nota_actual.compareTo(Nota_Anterior) > 0){
+                        _NotasCorregidas.add(0, Nota_actual);
+                    } 
                 /*
                     Si tienen la misma nota el heap se encarga de ordenarlos decrecientemente por ID
                     Si no tienen la misma nota significa que deben ir adelante, para que queden
                     ordenados por nota decrecientemente.
                 */
+                    Nota_Anterior = Nota_actual;
+                }
+        }
 
-                Nota_Anterior = Nota_actual;
-            }
-
-            NotaFinal[] Array_NotasOrdenadas = ListaEnlazada_a_Array(_NotasCorregidas);
-
-            return Array_NotasOrdenadas;
+            NotaFinal[] res = _NotasCorregidas.toArray(new NotaFinal[_NotasCorregidas.size()]);
+            return res;
 
         } else {
             return null;
@@ -242,18 +231,18 @@ public class Edr {
         
     }
 
-    private NotaFinal[] ListaEnlazada_a_Array(ListaEnlazada<NotaFinal> Notas_desordenadas){     
-        ListaEnlazada<NotaFinal>.ListaIterador Iterador_Notas = Notas_desordenadas.iterador();
-        NotaFinal[] NotasOrdenadas = new NotaFinal[Notas_desordenadas.longitud()];
+    // private NotaFinal[] ListaEnlazada_a_Array(ListaEnlazada<NotaFinal> Notas_desordenadas){     
+    //     ListaEnlazada<NotaFinal>.ListaIterador Iterador_Notas = Notas_desordenadas.iterador();
+    //     NotaFinal[] NotasOrdenadas = new NotaFinal[Notas_desordenadas.longitud()];
 
-        int i = 0;
-        while( Iterador_Notas.haySiguiente()){                                              // O(E) ----> en el peor caso 
-            NotasOrdenadas[i] = Iterador_Notas.siguiente();
-            i++;
-        }
+    //     int i = 0;
+    //     while( Iterador_Notas.haySiguiente()){                                              // O(E) ----> en el peor caso 
+    //         NotasOrdenadas[i] = Iterador_Notas.siguiente();
+    //         i++;
+    //     }
 
-        return NotasOrdenadas;
-    }
+    //     return NotasOrdenadas;
+    // }
 
     // Complejidad -> O(E * log E)
 

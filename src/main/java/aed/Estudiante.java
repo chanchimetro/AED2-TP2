@@ -6,7 +6,6 @@ public class Estudiante implements Comparable<Estudiante> {
     private int _cantRespuestasCorrectas;
     private int[] _examen;
     private boolean _sospechosoCopiarse;
-    private boolean _corregido; 
 
     public Estudiante(int id, int longExamen) {
         _id = id;
@@ -17,7 +16,6 @@ public class Estudiante implements Comparable<Estudiante> {
             _examen[i] = -1;
         }
         _sospechosoCopiarse = false;
-        _corregido = false; 
     }
 
     public Estudiante(Estudiante est) {
@@ -26,11 +24,6 @@ public class Estudiante implements Comparable<Estudiante> {
         _cantRespuestasCorrectas = est._cantRespuestasCorrectas;
         _examen = est._examen.clone();
         _sospechosoCopiarse = est._sospechosoCopiarse;
-        _corregido = est._corregido; 
-    }
-
-    public void corregido(){
-        _corregido = true; 
     }
 
     public int[] getExamen() {
@@ -92,8 +85,6 @@ public class Estudiante implements Comparable<Estudiante> {
         // si ambos ya entregaron primero chequea si se copió y luego compara por nota y después por id
         } else if(this._sospechosoCopiarse != otro._sospechosoCopiarse){
             res = Boolean.compare(this._sospechosoCopiarse, otro._sospechosoCopiarse);    
-        } else if(this._corregido != otro._corregido){
-            res = Boolean.compare(this._corregido, otro._corregido);
         } else {
             res = comparar_por_nota_e_id(otro); 
         }
