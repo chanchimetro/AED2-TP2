@@ -42,7 +42,7 @@ public class Estudiante implements Comparable<Estudiante> {
         return _cantRespuestasCorrectas;
     }
 
-    public void reiniciarExamen(){
+    public void reiniciarCantRespuestasCorrectas(){
         this._cantRespuestasCorrectas = 0;
     }
 

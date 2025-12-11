@@ -6,6 +6,7 @@ public class MinHeap<T extends Comparable<T>> {
     private ArrayList<HandleMinHeap<T>> _lista; 
     
     public  class HandleMinHeap<U extends Comparable<U>> implements Handle<U> {
+        /* Es el mismo tipo que la clase, lo hicimos así para evitar problemas de tipado. */
         private int _posicion;
         private U _elem;
 
@@ -77,7 +78,6 @@ public class MinHeap<T extends Comparable<T>> {
         
         _lista.remove(_lista.size() - 1);
 
-        
         if (_lista.size() > 0) {
             bajar(0);
         }
@@ -101,6 +101,7 @@ public class MinHeap<T extends Comparable<T>> {
 
     private int bajar(int index) { //O(log N)
        int ret = index;
+       
         while(!hoja(index) 
             && (_lista.get(index).valor().compareTo(_lista.get(hijoIzq(index)).valor()) > 0 || 
                (hijoDer(index) < _lista.size() && _lista.get(index).valor().compareTo(_lista.get(hijoDer(index)).valor()) > 0))) {
@@ -112,7 +113,6 @@ public class MinHeap<T extends Comparable<T>> {
             }
 
             intercambiar_posiciones(index, menor);
-
 
             index = menor;
             ret = menor;
