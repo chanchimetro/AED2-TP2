@@ -48,7 +48,7 @@ public class MinHeap<T extends Comparable<T>> {
         return _lista.get(0);
     }
 
-    public HandleMinHeap<T> encolar(T elem) {//O(log N)
+    public Handle<T> encolar(T elem) {//O(log N)
         HandleMinHeap<T> handle = new HandleMinHeap(_lista.size(), elem);
         _lista.add(handle);
 

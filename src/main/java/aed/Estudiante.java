@@ -26,7 +26,7 @@ public class Estudiante implements Comparable<Estudiante> {
 
     public int[] getExamen() {
         return _examen.clone();
-        /* romp el encapslamiento si no poníamos clone */
+        /* rompe el encapsulamiento si no poníamos clone */
     }
 
     public boolean entrego() {

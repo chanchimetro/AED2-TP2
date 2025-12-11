@@ -98,9 +98,9 @@ public class Edr {
             resolver(estudiante, indicePrimerRespuestaCopiar, ValorRespuestaACopiar); // O(log E)
         }
     }
-        
     // Complejidad -> O(R + log E)
         /* O( v * R + log E ) = O( 1 * R + log E) = O( R + log E) */
+
 
     private int[] obtenerPosicion(int id, int n) {
         int columnasUsadas = (n+1) / 2;
