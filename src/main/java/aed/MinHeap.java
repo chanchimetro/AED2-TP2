@@ -22,21 +22,21 @@ public class MinHeap<T extends Comparable<T>> {
             _posicion = actualizar_valor_en_heap(_posicion);
         }
 
-        public int posicion() {// O(1)
+        private int posicion() {// O(1)
             return _posicion;
         }
 
-        private void setPosicion(int y){// O(1)
+        private void setPosicion(int y){ // O(1)
             this._posicion = y;
         }
 
     }
 
-    private int actualizar_valor_en_heap(int index){//O(log N)
-        index = subir(index);// O(log N)
-        index = bajar(index);// O(log N)
+    private int actualizar_valor_en_heap(int index){ //O(log N)
+        index = subir(index); // O(log N)
+        index = bajar(index); // O(log N)
         return index;
-        /* lo acomoda en la heap y devuelve el indice */ 
+        /* lo acomoda en el heap y devuelve el indice */ 
     }
 
     public MinHeap() {// O(1)
@@ -153,7 +153,7 @@ public class MinHeap<T extends Comparable<T>> {
         return 2 * index + 2;
     }
 
-    public int size() {
+    private int size() {
         return _lista.size();
     }
 }
