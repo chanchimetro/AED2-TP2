@@ -147,6 +147,7 @@ public class Edr {
         int respuestaACopiar = -1;
         int idMejorVecino = -1; 
 
+        // En el peor caso hay tres vecinos O(3) y tenemos que revisar las R respuestas O(R) --> O(R)
         for(int i = 0; i < vecinos.size(); i++) { 
             Estudiante vecino = (Estudiante) _handlesEstudiantes[vecinos.get(i)].valor();
             
@@ -158,7 +159,7 @@ public class Edr {
             // Buscar respuestas a copiar
             for(int x = 0; x < examenVecino.length; x++) { 
                 if (examenEstudiante[x] == -1 && examenVecino[x] != -1){
-                    if(cantRespuestasAux == 0){ // Solo guardamos la PRIMERA respuesta que se pueda copiar
+                    if(cantRespuestasAux == 0){ // Solo guardamos la primer respuesta que se pueda copiar
                         indicePrimeraResp = x;
                         valorPrimeraResp = examenVecino[x];
                     }
@@ -175,9 +176,9 @@ public class Edr {
                 idMejorVecino = vecino.getId();
             }
         }
-        // Solo si hay respuestas a copiar se copia
+        // Solo si hay respuestas a copiar se copia O(log E)
         if (cantRespuestas > 0) {
-            resolver(estudiante, indicePreguntaACopiar, respuestaACopiar);
+            resolver(estudiante, indicePreguntaACopiar, respuestaACopiar); 
         }
         
     }
@@ -234,9 +235,9 @@ public class Edr {
 
         int estudiantesQueNoSeCopiaron = _heapEstudiantes.size() - _estudiantesSospechosos;
         ArrayList<NotaFinal> _NotasCorregidas = new ArrayList<NotaFinal>(estudiantesQueNoSeCopiaron);
-
+        // El peor caso corresponde a que ningun estudiante se haya copiado O(E)
         for (int i = 0; i < estudiantesQueNoSeCopiaron; i++){                    
-            Estudiante estudianteACorregir = _heapEstudiantes.desencolar();
+            Estudiante estudianteACorregir = _heapEstudiantes.desencolar(); // O(log E)
             if (!estudianteACorregir.sospechosoCopiarse()){
                 int id = estudianteACorregir.getId();
                 double nota = 100 * ((double) estudianteACorregir.getRespuestasCorrectas() / _examenCanonico.length);
@@ -249,7 +250,7 @@ public class Edr {
         NotaFinal[] res = _NotasCorregidas.toArray(new NotaFinal[_NotasCorregidas.size()]);
         return res;
     }
-
+    // Complejidad -> O(E * log E)
 //-------------------------------------------------------CHEQUEAR COPIAS-------------------------------------------------
 
     public int[] chequearCopias() {
