@@ -886,4 +886,74 @@ class EdrTests {
         assertTrue(Arrays.equals(notas_esperadas, notas));
     }
 
+    @Test
+    void copiarse_solo_respuestas_faltantes() {
+        Edr edr = new Edr(5, 6, solucion);
+        
+        /*  
+            0 - 1 - 2
+            3 - 4 - 5
+            - - - - -
+            - - - - -
+            - - - - -
+                    --> 
+                        0 = respuestas en posiciones pares
+                        1 = todas respuestas correctas 
+                        3 = respuestas en posiciones pares
+
+        */
+        
+        for(int i = 0; i < 10; i = i + 2) {
+            edr.resolver(0, i, i);
+        }
+        for(int i = 0; i < 10; i++) {
+            edr.resolver(1, i, i);
+        }
+        for(int i = 1; i < 10; i += 2) {
+            edr.resolver(3, i, i);
+        }
+        
+        double[] notas = edr.notas();
+        double[] esperadas = new double[]{50.0, 100.0, 0.0, 50.0, 0.0, 0.0};
+        assertTrue(Arrays.equals(esperadas, notas));
+        
+
+        edr.copiarse(0);
+        // ahora 0 tiene una respuesta par de 1 -> 1°
+        
+        notas = edr.notas();
+        esperadas = new double[]{60.0, 100.0, 0.0, 50.0, 0.0, 0.0};
+        assertTrue(Arrays.equals(esperadas, notas));
+        
+        edr.copiarse(3);
+        // ahora 2 tinee una respuesta par de 0 -> 0°
+        
+        notas = edr.notas();
+        esperadas = new double[]{60.0, 100.0, 0.0, 60.0, 0.0, 0.0};
+        assertTrue(Arrays.equals(esperadas, notas));
+        
+        edr.copiarse(4);
+        // ahora 4 tiene una respuesta de 1 (el que tiene más respuestas) -> copia 0°
+        
+        notas = edr.notas();
+        esperadas = new double[]{60.0, 100.0, 0.0, 60.0, 10.0, 0.0};
+        assertTrue(Arrays.equals(esperadas, notas));
+        
+
+        edr.copiarse(2);
+        // ahora 2 se copia de 1 -> 0°
+        
+        notas = edr.notas();
+        esperadas = new double[]{60.0, 100.0, 10.0, 60.0, 10.0, 0.0};
+        assertTrue(Arrays.equals(esperadas, notas));
+
+        for(int i = 0; i < 6; i++) {
+            // requiere de entregar todos
+            edr.entregar(i);
+        }
+        
+        int[] copiones = edr.chequearCopias();
+        int[] esperadosCopiones = new int[]{0, 1, 2, 3, 4};
+        assertTrue(Arrays.equals(esperadosCopiones, copiones));
+    }        
 }

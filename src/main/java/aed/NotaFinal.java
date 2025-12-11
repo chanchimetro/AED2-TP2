@@ -1,8 +1,8 @@
 package aed;
 
 public class NotaFinal implements Comparable<NotaFinal> {
-    public double _nota;
-    public int _id;
+    private double _nota;
+    private int _id;
 
     public NotaFinal(double nota, int id){
         _nota = nota;

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class MinHeap<T extends Comparable<T>> {
     private ArrayList<HandleMinHeap<T>> _lista; 
     
-    public  class HandleMinHeap<U extends Comparable<U>> implements Handle<U> {
+    private  class HandleMinHeap<U extends Comparable<U>> implements Handle<U> {
         /* Es el mismo tipo que la clase, lo hicimos así para evitar problemas de tipado. */
         private int _posicion;
         private U _elem;

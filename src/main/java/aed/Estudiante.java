@@ -1,11 +1,9 @@
 package aed;
 
 public class Estudiante implements Comparable<Estudiante> {
-    private int _id;
-    private boolean _entrego;
-    private int _cantRespuestasCorrectas;
+    private int _id, _cantRespuestasCorrectas;
+    private boolean _entrego, _sospechosoCopiarse;
     private int[] _examen;
-    private boolean _sospechosoCopiarse;
 
     public Estudiante(int id, int longExamen) {
         _id = id;
@@ -27,7 +25,8 @@ public class Estudiante implements Comparable<Estudiante> {
     }
 
     public int[] getExamen() {
-        return _examen;
+        return _examen.clone();
+        /* romp el encapslamiento si no poníamos clone */
     }
 
     public boolean entrego() {
